@@ -1,0 +1,48 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+.fillPage {
+    height: 100%;
+    background-color: #d5d5d5;
+    padding: 0;
+}
+.secondPage {
+    height: 100%;
+    box-shadow: 5px 5px 1px;
+}
+.changeText {
+    font-size: 32;
+}
+section {
+    padding: 20px 10px;
+}
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    margin: 20px auto;
+    padding: 40px;
+}
+.createObjects {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 250px;
+    height: 40px;
+    flex-direction: column;
+    text-align: center;
+}
+.img-container, #clearDisplay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+img {
+    width: 500px;
+    height: 175px;
+}
+
+
