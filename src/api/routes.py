@@ -47,7 +47,7 @@ def ticket_status():
 
     #
     status_data = Ticket.get_status(reference_number)
-    print(status_data)
+    # print(status_data)
 
     return jsonify(status_data)
 
@@ -65,13 +65,11 @@ def ticket_purchase():
     return jsonify(Ticket.create_ticket(race_id)), 201
 
 
-@app.route("/ticket/cancel", methods=["GET"])
+@app.route("/ticket/cancel", methods=["POST"])
 def ticket_cancelation():
 
-    # data = request.get_json() #gets race id entered at time of sale
-    # race_id = data.get('race_id')
-
-    reference_number = 49
+    data = request.get_json()
+    reference_number = data.get("reference_number")
 
     return jsonify(Ticket.cancel_ticket(reference_number))
 

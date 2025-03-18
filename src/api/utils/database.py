@@ -15,7 +15,7 @@ def get_db():
 
         # comment this off for debugging, it enforces relational integrity
         # comment off to insert data in the db without this constraint
-        g.db.execute("PRAGMA foreign_keys = ON;")
+    #      g.db.execute("PRAGMA foreign_keys = ON;")
 
     return g.db
 
