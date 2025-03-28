@@ -1,7 +1,7 @@
 
 insert into race (event_id, race_number)
 values 
-(1,1)/*,
+(1,2)/*,
 (1,2),
 (1,3) ,
 (2,4),

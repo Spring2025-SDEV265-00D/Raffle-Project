@@ -29,18 +29,18 @@ CREATE TABLE IF NOT EXISTS horse (
     race_id INTEGER NOT NULL,
     horse_number INTEGER NOT NULL CHECK (horse_number > 0),
     winner INTEGER DEFAULT 0 CHECK (winner IN (1, 0)), 
-    scratch INTEGER DEFAULT 0 CHECK (scratch IN (1, 0)), 
+    scratched INTEGER DEFAULT 0 CHECK (scratched IN (1, 0)), 
 
     FOREIGN KEY (race_id) REFERENCES race(id)
 );
 
 CREATE TABLE IF NOT EXISTS ticket (
-    reference_number INTEGER PRIMARY KEY AUTOINCREMENT, --subject to change upon client requirements
+    id INTEGER PRIMARY KEY AUTOINCREMENT, 
     horse_id INTEGER NOT NULL,
     created_dttm TEXT DEFAULT (datetime('now', 'localtime')),
 
     
-    status_code INTEGER NOT NULL DEFAULT 0 CHECK (status_code IN (0, 1, 2)),
+    status INTEGER NOT NULL DEFAULT 0 CHECK (status IN (0, 1, 2)),
     --0: "Issued/Valid"
     --1: "Redeemed"
     --2: "Void/Canceled"
