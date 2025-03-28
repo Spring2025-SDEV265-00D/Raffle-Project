@@ -1,130 +1,58 @@
-import random
-from enum import Enum
-from utils.database import get_db
-from models.race import Race
+from utils.util import Util
+
+from utils.db_instance import db
+from utils.base_model import BaseModel
 
 
-class Ticket:
+class Ticket(BaseModel):
 
-    class Status(Enum):
-        ACTIVE = (0, "ACTIVE")
-        REDEEMED = (1, "REDEEMED")
-        CANCELED = (2, "CANCELED")
+    @classmethod
+    def batching(cls, batch_data: list[dict]) -> list[dict]:
 
-        # add a label for readability
-        def __new__(cls, value, label):
-            obj = object.__new__(cls)
-            obj._value_ = value
-            obj.label = label
-            return obj
+        prepared_order = None
 
-    def __init__(self, reference_number=None, race_id=None, horse_id=None):
-        self.reference_number = reference_number
-        self.race_id = race_id
-        self.horse_id = horse_id
+        db.start_transaction()
+        try:
 
-    # returns all ticket data relevant to the customer
-    @staticmethod
-    def get_ticket_data(reference_number):
+            prepared_order = Ticket.handle_order(batch_data)
+            db.commit()
 
-        db = get_db()
-        with db:
-            cursor = db.cursor()
-            cursor.execute(
-                """select 
-                    event.event_name, 
-                    race.race_number, 
-                    horse.horse_number,
-                    ticket.reference_number,
-                    ticket.created_dttm 
-                    
-                    from ticket
-                    join horse on horse.id = ticket.horse_id
-                    join race on race.id = horse.race_id
-                    join event on event.id = race.event_id
-                    where ticket.reference_number = ?
-                """,
-                (reference_number,),
-            )
+        except:
+            db.rollback()
+            raise  # yet to define AppError
 
-            ticket_row = cursor.fetchone()
-            ticket_data = dict(ticket_row)
-
-        # print(ticket_data)
-
-        return ticket_data
+        return prepared_order
 
     @staticmethod
-    def create_ticket(race_id):
-        db = get_db()  # getting connection
+    def get_count_by_race(race_id: int | str):
 
-        with db:
-            cursor = db.cursor()
+        return db.query.ticket_count_for_race(race_id)
 
-            horse_id = Race.random_least_chosen_horse(race_id)
+    @classmethod
+    def handle_order(cls, data: list[dict]) -> list[dict]:
+        from models.race import Race
 
-            cursor.execute("INSERT INTO ticket (horse_id) VALUES (?)", (horse_id,))
+        # data= [{"race_id": "1", "qtty": 1}, {"race_id": "2", "qtty": 2}]
 
-            reference_number = cursor.lastrowid
+        new_ticket_ids = []
 
-            return Ticket.get_ticket_data(reference_number)
+        for dictionary in data:
 
-    @staticmethod
-    def get_status(reference_number):
+            # to be passed to Race.get_horses(dict)
+            # uses a generic query function that expects a dict
+            get_horses_data = {"race_id": dictionary["race_id"]}
 
-        db = get_db()
+            race_id = dictionary["race_id"]
+            qtty = dictionary["qtty"]
 
-        with db:
-            cursor = db.cursor()
+            horses_in_race = Race.get_horses(get_horses_data)
 
-            # check ticket status
-            cursor.execute(
-                "select status_code from ticket where reference_number = ?",
-                (reference_number,),
-            )  # needs to be a tuple to use ?
-            current_status = cursor.fetchone()  # grabbing row
+            ticket_count = Ticket.get_count_by_race(race_id)
+            query_data = Util.round_robin_pick(
+                horses_in_race, ticket_count, qtty)
+            tickets_for_this_race = db.query.insert_many(cls, query_data)
 
-            if current_status is None:  # if ticket # doesnt exist
-                return {"error": "Ticket not found"}
+            new_ticket_ids.extend(tickets_for_this_race)
 
-            return {"status": Ticket.Status(current_status[0]).label}
-
-    @staticmethod
-    def cancel_ticket(reference_number):
-
-        status_data = Ticket.get_status(reference_number)
-
-        # if error msg, return it
-        if status_data.get("error"):
-            return status_data
-
-        status = status_data.get("status")
-
-        if status == Ticket.Status.ACTIVE.label:
-
-            db = get_db()
-
-            with db:
-                cursor = db.cursor()
-                cursor.execute(
-                    "update ticket set status_code = ? where reference_number =?",
-                    (Ticket.Status.CANCELED.value, reference_number),
-                )
-
-        response = {
-            Ticket.Status.CANCELED.label: {
-                "message": "Ticket #"
-                + str(reference_number)
-                + " has already been canceled."
-            },
-            Ticket.Status.REDEEMED.label: {
-                "message": "Ticket #"
-                + str(reference_number)
-                + " has already been redeemed."
-            },
-            Ticket.Status.ACTIVE.label: {
-                "message": "Ticket #" + str(reference_number) + " is now canceled."
-            },
-        }
-
-        return response.get(status)
+        order_rows = db.query.get_printable_ticket(new_ticket_ids)
+        return Util.handle_data(order_rows)
