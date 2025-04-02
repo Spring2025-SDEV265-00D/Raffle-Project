@@ -3,7 +3,7 @@ from flask import g
 from pathlib import Path
 from utils.queries import QueryHelper
 
-DATABASE_PATH = Path("../data/raffle.db")
+DATABASE_PATH = Path("data/raffle.db")
 
 
 class Database:

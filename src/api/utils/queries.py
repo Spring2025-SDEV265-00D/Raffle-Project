@@ -1,9 +1,10 @@
 import sqlite3
 from utils.util import Util
+from typing import Literal, TypedDict
 
 
-# need to handle db fails-custom exception?
-# ensure not multithread with transactions, sqlite complains--done in DB class via query property
+class ModelDict(TypedDict):
+    model_id: int | str
 
 
 class QueryHelper:
@@ -14,6 +15,17 @@ class QueryHelper:
 
     # def _build_clause(ty)
 
+    def has_record(self, cls, data: dict) -> bool:
+        table_name = cls.get_table_name()
+        data = Util.strip_id_prefix(data)
+
+        where_clause, where_args = self.clause_builder("WHERE", data)
+        query = f"SELECT 1 FROM {table_name} {where_clause}"
+
+        self.cursor.execute(query, where_args)
+
+        return self.cursor.fetchone() is not None
+
     def get_printable_ticket(self, ids: list) -> list[dict]:
 
         _spacer = ", "
@@ -21,17 +33,17 @@ class QueryHelper:
 
         query = f"""
             SELECT
-            event.event_name, 
-            race.race_number, 
-            horse.horse_number, 
-            ticket.id, 
+            event.event_name,
+            race.race_number,
+            horse.horse_number,
+            ticket.id,
             created_dttm
-            
+
             FROM ticket
-            JOIN horse ON horse.id = ticket.horse_id 
-            JOIN race ON race.id = horse.race_id 
-            JOIN event ON event.id = race.event_id 
-            
+            JOIN horse ON horse.id = ticket.horse_id
+            JOIN race ON race.id = horse.race_id
+            JOIN event ON event.id = race.event_id
+
             WHERE ticket.id IN ({placeholders})
             """
 
@@ -39,42 +51,67 @@ class QueryHelper:
 
         return self.cursor.fetchall()
 
-    def ticket_count_for_race(self, race_id: int | str) -> int:
+    def ticket_count_for_race(self, race_id: dict) -> int:
 
+        data = Util.strip_id_prefix(race_id)
+        id_value = data['id']
         # Util.f("in ticket cout race QUERY")
+
         query = """
-            SELECT COUNT(*) 
-            FROM ticket t 
-            JOIN horse h ON t.horse_id = h.id 
+            SELECT COUNT(*)
+            FROM ticket t
+            JOIN horse h ON t.horse_id = h.id
             WHERE h.race_id = ?"""
-        args = (race_id,)
+        args = (id_value,)
 
         # Util.p("inside query ticket count", query=query, args=args)
 
         count = self.cursor.execute(query, args).fetchone()[0]
+        # dont need this, always returning (0,) if no count
         return 0 if count is None else count
 
-    def get_all_from(self, cls):
+    def get_count(self, cls, query_data: dict):  # work here
+        # Util.p("query.get count", cls=cls, data=query_data)
+        table_name = cls.get_table_name()
+
+        where_clause, where_args = self.clause_builder("WHERE", query_data)
+
+        query = f"SELECT COUNT(*) FROM {table_name} {where_clause}"
+
+        self.cursor.execute(query, where_args)
+
+        # Util.p("in get count", countdata=self.cursor.fetchone())
+
+        return self.cursor.fetchone()[0]
+
+    def get_all_from(self, cls) -> list[sqlite3.Row]:
 
         table_name = cls.get_table_name()
         query = f"SELECT * FROM {table_name}"
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
-    def get_row_by_id(self, cls, id_value):  # keep this?
+    def get_row_by_id(self, cls, model_id: dict | int) -> sqlite3.Row:  #
+
+        if isinstance(model_id, int):
+            model_id = Util.id_int_to_dict(model_id)
+        else:
+            model_id = Util.strip_id_prefix(model_id)
 
         table_name = cls.get_table_name()
-        id_label = cls.Fields.ID.label
+        where_clause, where_args = self.clause_builder("WHERE", model_id)
 
-        query = f"SELECT * FROM {table_name} where {id_label} = ?"
-        args = (id_value,)
+        # Util.p(Util.s(), model_id=model_id)
+        query = f"SELECT * FROM {table_name} {where_clause}"
 
-        self.cursor.execute(query, args)
+        self.cursor.execute(query, where_args)
 
         return self.cursor.fetchone()
 
     # call this Select?
-    def get_many_rows_by_att(self, cls, query_data: dict):
+    def get_many_rows_by_att(self, cls, query_data: dict) -> list[sqlite3.Row]:
+
+        Util.p("in get many rows QUERY", query_data=query_data)
 
         table_name = cls.get_table_name()
 
@@ -85,12 +122,16 @@ class QueryHelper:
 
         # Util.p("in get many rows", query=query)
         self.cursor.execute(query, args)
+        # Util.p("in get many rows", data=self.cursor.fetchone())
         return self.cursor.fetchall()
 
-    def update(self, cls, set_clause_data: dict, where_clause_data: dict):
+    def update_row_by_id(self, cls, set_clause_data: dict, where_clause_data: dict) -> bool:
         from utils.util import Util
 
         table_name = cls.get_table_name()
+        where_clause_data = Util.strip_id_prefix(where_clause_data)
+
+        # Util.p("query update row by id", cls=cls, where=where_clause_data)
 
         set_clause_query, set_clause_args = self.clause_builder(
             "SET", set_clause_data)
@@ -101,15 +142,14 @@ class QueryHelper:
         query = f"UPDATE {table_name} {set_clause_query} {where_clause_query}"
         args = set_clause_args + where_clause_args
 
+       # Util.p("query.update", query=query, args=args)
+
         self.cursor.execute(query, args)
-        # self.conn.commit()  ##########################need other place for this? need to commit for updates
+        self.conn.commit()  # need other place for this? need to commit for updates
 
-        # Util.p(query, "args")
-        # Util.p(args)
+        return self.cursor.rowcount > 0
 
-        return
-
-    def clause_builder(self, clause_type, clause_data: dict):
+    def clause_builder(self, clause_type: Literal["INSERT", "WHERE", "SET"], clause_data: dict) -> tuple[str, tuple]:
         from utils.util import Util
 
         if not clause_data:
@@ -135,7 +175,7 @@ class QueryHelper:
 
     #################################################################################################################
 
-    def insert_builder(self, clause_data: dict | list):
+    def insert_builder(self, clause_data: dict | list) -> tuple[str, tuple]:
 
         # clause_data = {"horse_idT": 1, "horseNUMM": 33}
 
@@ -150,7 +190,7 @@ class QueryHelper:
 
         return clause, clause_values
 
-    def insert_many(self, cls, query_data: list[dict], clause_type="INSERT"):
+    def insert_many(self, cls, query_data: list[dict], clause_type="INSERT") -> list:
         inserted_ids_list = []
 
         for dictionary in query_data:
@@ -161,7 +201,12 @@ class QueryHelper:
 
         return inserted_ids_list
 
-    def insert(self, cls, query_data: dict, clause_type="INSERT"):
+    def insert(self, cls, query_data: dict, clause_type="INSERT") -> int:
+        """_summary_
+            Takes a dictionary with expected keys per class and inserts into the database.
+        Returns:
+            _type_: int -> Last inserted id in database. (self.cursor.lastrowid)
+        """
         table_name = cls.get_table_name()
 
         attributes, args = self.clause_builder(clause_type, query_data)

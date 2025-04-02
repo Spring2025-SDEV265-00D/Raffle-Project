@@ -1,6 +1,17 @@
 class Util:
 
     @staticmethod
+    def pretty_print(data):
+        import json
+
+        print("\n\n")
+        print(f"************************************************")
+        print(json.dumps(data, indent=4))
+
+        print(f"************************************************")
+        print("\n\n")
+
+    @staticmethod
     def f(userMsg="no msg for you"):
         print("\n\n")
         print(f"************************{userMsg}************************\n")
@@ -20,7 +31,16 @@ class Util:
         print("\n\n")
 
     @staticmethod
-    def round_robin_pick(horses: list, tickets_sold: int, new_tickets: int) -> list[dict]:
+    def id_int_to_dict(id_value: int) -> dict:
+        return {'id': id_value}
+
+    @staticmethod
+    def round_robin_pick(
+        horses: list,
+        tickets_sold: int,
+        new_tickets: int
+    ) -> list[dict]:
+
         next_horses = []
         roster_size = len(horses)
 
@@ -31,12 +51,12 @@ class Util:
         return next_horses
 
     @staticmethod
-    def handle_data(data, fields=None):
+    def handle_row_data(data: list[dict] | dict, fields=None):
 
         if isinstance(data, list):
-            return Util._handle_multiple_rows_data(data, fields)
+            return Util._handle_many(data, fields)
 
-        return Util._handle_row_data(data, fields)
+        return Util._handle_single(data, fields)
 
     @staticmethod
     def _filter_by_field(dictionary, fields=None):
@@ -56,22 +76,27 @@ class Util:
         return filtered_data
 
     @staticmethod
-    def _handle_row_data(row_data, fields=None):
+    def _handle_single(row_data, fields=None):
         row_data = dict(row_data)
         row_data = Util._filter_by_field(row_data, fields)
 
         return row_data
 
     @staticmethod
-    def _handle_multiple_rows_data(rows_data, fields=None):
+    def _handle_many(rows_data, fields=None):
 
-        rows_data = [Util._handle_row_data(row, fields) for row in rows_data]
+        rows_data = [Util._handle_single(row, fields) for row in rows_data]
         return rows_data
 
     # strips id prefix of list coming from front end
     # {'race_id': 1, 'qtty': 3} -> {'id': 1, 'qtty': 3},
     @staticmethod
-    def format_batch_data(data: list):
+    def strip_id_prefix(data: list[dict] | dict):
+        only_one = False
+
+        if isinstance(data, dict):
+            only_one = True
+            data = [data]
 
         formatted = []
 
@@ -85,5 +110,12 @@ class Util:
 
             formatted.append(formatted_item)
 
-        # Util.p("inner loop", key=formatted)
+        if only_one:
+            formatted = formatted[0]
+
         return formatted
+
+    @staticmethod
+    def s():
+        import inspect
+        return inspect.currentframe().f_back.f_code.co_name

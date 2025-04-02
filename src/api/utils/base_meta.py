@@ -7,9 +7,8 @@ from utils.util import Util
 
 
 class FieldEnumMeta(Enum):
-    def __init__(self, label, full_name):
+    def __init__(self, label):
         self.label = label
-        self.full_name = full_name
 
 
 class BaseMeta(type):
@@ -32,18 +31,21 @@ class BaseMeta(type):
         # make class member holding table name
         class_dict["_TABLE"] = table_name
 
+        # creating an enum holding the db column names for each table
+        # did this to avoid hardcoding attribute column names but hasnt been helpful yet
+
         enum_fields = {}
         for col_data in table_column_data:
-            col_name = col_data[1]
-            col_type = col_data[2]  # not using
             is_pk = col_data[5] == 1
+            col_name = f"{table_name.lower()}_{col_data[1]}" if is_pk else col_data[1]
+            col_type = col_data[2]  # not using
 
             enum_var_name = "ID" if is_pk else col_name.upper()
-            full_name = f"{table_name}.{col_name}"
+            # full_name = f"{table_name}_{col_name}" if is_pk else f"{table_name}.{col_name}"
 
             # Util.p(col_name)
 
-            enum_fields[enum_var_name] = (col_name, full_name)
+            enum_fields[enum_var_name] = (col_name)
 
         built_enum = FieldEnumMeta(f"{table_name}FieldEnum", enum_fields)
 
