@@ -70,7 +70,8 @@ function generateTicket(data) {
             </div>
             <p class="textBottom">This event is sanctioned by ${data.license}</p>
         </div>
-        <div class="ticket">
+        
+        <div class="ticket" id="ticket2">
             <h2 align="center" id="ticketTitle">${data.event_name}</h2>
             <div class="ticketBody">
                 <img align="left" class="ticketImg" src="images/horse_scroll_1.png" alt="horse_scroll_1">
@@ -111,6 +112,7 @@ getTicketBtn.addEventListener("click", async function () {
     // Generate and insert ticket HTML
     ticketContainer.innerHTML = generateTicket(ticketData);
 
+
     // Show the modal
     ticketModal.style.display = "block";
   } catch (error) {
@@ -125,6 +127,8 @@ getTicketBtn.addEventListener("click", async function () {
 
 // Print ticket when print button is clicked
 printBtn.addEventListener("click", function () {
+  // generateTicket(data);
+
   window.print();
 });
 
