@@ -48,7 +48,9 @@ class BaseModel(metaclass=BaseMeta):
 
     @classmethod
     def update_one(cls, set_clause_data: dict, where_clause_data: dict) -> None:
-        # needs id_exists check if not called before// ok:ticket.cancel
+        # needs id_exists check if not called before// ok:ticket.cancel, stop_betting
+
+        Util.p("basemodel update one", whereClause=where_clause_data)
 
         if not db.query.update_row_by_id(cls, set_clause_data, where_clause_data):
             raise DatabaseError(
@@ -56,12 +58,10 @@ class BaseModel(metaclass=BaseMeta):
 
     @classmethod
     def get_count_by_att(cls, query_data: dict):
-        from utils.db_instance import db
 
         Util.p("basemodel.get count", cls=cls, data=query_data)
-        Util.f("in basemodel get count")
 
-        x = db.query.get_count(cls, query_data)
-        Util.p("x test", xTEST=x)
+        count = db.query.get_count(cls, query_data)
+        Util.p("x test", xTEST=count)
 
-        return x
+        return count

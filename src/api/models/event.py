@@ -13,9 +13,10 @@ class Event(BaseModel):
         from models.race import Race
         if Event.id_exists_in_db(data):
             return Race.get_races_for_event(data, filter)
+# ---------------------------------------------------------------------------------
 
     @staticmethod
-    def build_event(data: dict) -> dict:
+    def create(data: dict) -> dict:
         from sqlite3 import IntegrityError
 
         #        data = {
@@ -43,16 +44,25 @@ class Event(BaseModel):
         # new_event_id = Util.id_int_to_dict(new_event_id)
         new_event_data = Event.get_data(new_event_id)
         return Util.handle_row_data(new_event_data)
+# ---------------------------------------------------------------------------------
 
     ############################# Tried and Tested #############################
 
     @staticmethod
-    def add_races(data: dict):
+    def add_race(data: dict):
         from models.race import Race
-#
-#   data = {'event_id'}
-#
-#
-#
+
+        event_id, _ = Util.split_dict(data)
+        if Event.id_exists_in_db(event_id):
+            db.start_transaction()
+            try:
+                Race.build(data)
+                db.commit()
+            except:
+                db.rollback()
+                raise
+#       data = {'event_id': 3}
+
+        # Race.build(data)
         pass
-       # if Event.id_exists_in_db()
+# ---------------------------------------------------------------------------------

@@ -7,6 +7,8 @@ from utils.app_error import *
 
 class Race(BaseModel):  # need error handling
 
+   # ID = 'race_id'
+
     class Status(Enum):
         OPEN = 0
         CLOSED = 1
@@ -43,32 +45,65 @@ class Race(BaseModel):  # need error handling
         # race_id = {'race_id': N}
         if Race.id_exists_in_db(race_id):
             return Ticket.count_by_race(race_id)
-############################# Tried and Tested #############################
+# ---------------------------------------------------------------------------------
 
     @staticmethod
     def get_horses(race_data: dict, filter=None):
         from models.horse import Horse
         if Race.id_exists_in_db(race_data):
             return Horse.get_horses_for_race(race_data)  #
+# ---------------------------------------------------------------------------------
 
     @staticmethod
-    def stop_betting(race_id):
+    def close(race_id: dict):
+
+        # race_id = {'race_id': 3}
 
         if Race.is_closed(race_id):
-            return {"error": "This race has already been closed."}
+            raise ModelStateError(
+                f"Race -> {race_id} has already been closed.", context=AppError.get_error_context(race_id=race_id))
 
-        else:
+        set_data = {Race.Status.LABEL.value: Race.Status.CLOSED.value}
+        Race.update_one(set_data, race_id)
+        return {"message": f"Race -> {race_id} has been closed. It is no longer available for participation."}
+############################# Tried and Tested #############################
+# ---------------------------------------------------------------------------------
 
-            db = get_db()
-            with db:
-                cursor = db.cursor()
-                cursor.execute(
-                    f"""
-                               update {Race.TABLE} 
-                               set {Race.STATUS} = ? 
-                               where {Race.ID} = ? 
-                               """,
-                    (Race.Status.CLOSED.value, race_id),
-                )
+    @staticmethod
+    def add_horses(data: dict):
+        from models.horse import Horse
+        race_id, _ = Util.split_dict(data)
+        if Race.id_exists_in_db(race_id):
+            return Horse.build(data)
+        # ---------------------------------------------------------------------------------
 
-                return {"message": "Race is now closed. No more betting allowed."}
+    @staticmethod
+    def build(data: dict) -> None:
+        # from models.horse import Horse
+        event_id = qtty = None
+        # PROB NEEDS TRANSACTION TOO
+
+        # incoming data
+        # data = {'event_id': 3, 'qtty': 8}   qtty = 'horses_in_race'
+        event_id, qtty = Util.split_dict(data)
+        # Util.p("Race.build", id=event_id, qtty=qtty)
+
+        # check how many races already in that event
+        event_race_count = Race.get_count_by_att(event_id)
+        new_race_number = event_race_count + 1
+
+        insert_data = event_id.copy() | {'race_number': new_race_number}
+
+        # Util.p("Race.build", id=event_id, qtty=qtty, insert_data=insert_data)
+
+        # insert race_count +1 as race_num
+        new_race_id = db.query.insert(Race, insert_data)
+        new_race_id = Util.id_int_to_dict(new_race_id, Race)
+        # Util.p("in Race.build", id=new_race_id)
+       # Util.p("in Race.build", inserted_race=Race.get_data(new_race_id))
+
+        horses_data = new_race_id.copy() | qtty
+
+        Race.add_horses(horses_data)
+        # db.commit()  # somewhere here or @caller (Event.add_race)
+        pass

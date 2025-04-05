@@ -22,9 +22,9 @@ class Ticket(BaseModel):
         # sqlite returns either 0 (no tickets) or [] empty list (no race_id match)
         # Race checks for race_id validity
 
-        if not sold_tickets:
-            raise EmptyDataError(
-                f"No tickets sold for race -> {race_id}", context=AppError.get_error_context(race_id=race_id))
+#        if not sold_tickets:
+#            raise EmptyDataError(
+#                f"No tickets sold for race -> {race_id}", context=AppError.get_error_context(race_id=race_id))
         return sold_tickets
 # ---------------------------------------------------------------------------------
 
@@ -63,6 +63,11 @@ class Ticket(BaseModel):
             race_id_data = {"race_id": order_line["race_id"]}
             qtty = order_line["qtty"]
 
+            # this function also checks if race_id exists in fact, and throws error if not
+            if Race.is_closed(race_id_data):
+                raise ModelStateError(
+                    f"Race -> {race_id_data} is closed. Cannot sell tickets.")
+
             horses_in_race = Race.get_horses(race_id_data)
             # Util.p('ticket handle order', horses_in_race=horses_in_race)
 
@@ -70,12 +75,14 @@ class Ticket(BaseModel):
 
             query_data = Util.round_robin_pick(
                 horses_in_race, ticket_count, qtty)
+
             tickets_for_this_race = db.query.insert_many(Ticket, query_data)
 
             new_ticket_ids.extend(tickets_for_this_race)
 
         order_rows = db.query.get_printable_ticket(new_ticket_ids)
         return Util.handle_row_data(order_rows)
+# ---------------------------------------------------------------------------------
 
     @staticmethod
     def cancel(ticket_id: dict):

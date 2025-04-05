@@ -3,10 +3,29 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 
+# *-----------------ADMIN-----------------*
+@app.route("/admin/races/close")
+def close_race():
+    return render_template("raceStopBetting.html")
+
+
+# *-----------------SELLERS-----------------*
+
+
 # home page, nothing here yet
 @app.route("/")
 def home():
     return render_template("index.html")
+
+
+@app.route("/test")
+def test():
+    return render_template("testing.html")
+
+
+@app.route("/event/selection")
+def event_selection():
+    return render_template("eventSelection.html")
 
 
 # check ticker status with reference_number

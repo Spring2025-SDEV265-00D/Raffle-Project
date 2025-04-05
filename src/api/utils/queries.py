@@ -13,18 +13,22 @@ class QueryHelper:
         self.conn = connection  # passes the conn to obj
         self.cursor = self.conn.cursor()  # creates a cursor obj
 
-    # def _build_clause(ty)
+# ---------------------------------------------------------------------------------
 
-    def has_record(self, cls, data: dict) -> bool:
+    def has_record(self, cls, model_id: dict | str | int) -> bool:
         table_name = cls.get_table_name()
-        data = Util.strip_id_prefix(data)
 
-        where_clause, where_args = self.clause_builder("WHERE", data)
+        if isinstance(model_id, dict):
+            model_id = Util.strip_id_prefix(model_id)
+        else:
+            model_id = Util.id_int_to_dict(model_id)
+        where_clause, where_args = self.clause_builder("WHERE", model_id)
         query = f"SELECT 1 FROM {table_name} {where_clause}"
 
         self.cursor.execute(query, where_args)
 
         return self.cursor.fetchone() is not None
+# ---------------------------------------------------------------------------------
 
     def get_printable_ticket(self, ids: list) -> list[dict]:
 
@@ -50,6 +54,7 @@ class QueryHelper:
         self.cursor.execute(query, ids)
 
         return self.cursor.fetchall()
+# ---------------------------------------------------------------------------------
 
     def ticket_count_for_race(self, race_id: dict) -> int:
 
@@ -69,6 +74,7 @@ class QueryHelper:
         count = self.cursor.execute(query, args).fetchone()[0]
         # dont need this, always returning (0,) if no count
         return 0 if count is None else count
+# ---------------------------------------------------------------------------------
 
     def get_count(self, cls, query_data: dict):  # work here
         # Util.p("query.get count", cls=cls, data=query_data)
@@ -83,6 +89,7 @@ class QueryHelper:
         # Util.p("in get count", countdata=self.cursor.fetchone())
 
         return self.cursor.fetchone()[0]
+# ---------------------------------------------------------------------------------
 
     def get_all_from(self, cls) -> list[sqlite3.Row]:
 
@@ -90,13 +97,14 @@ class QueryHelper:
         query = f"SELECT * FROM {table_name}"
         self.cursor.execute(query)
         return self.cursor.fetchall()
+# ---------------------------------------------------------------------------------
 
-    def get_row_by_id(self, cls, model_id: dict | int) -> sqlite3.Row:  #
+    def get_row_by_id(self, cls, model_id: dict | str | int) -> sqlite3.Row:  #
 
-        if isinstance(model_id, int):
-            model_id = Util.id_int_to_dict(model_id)
-        else:
+        if isinstance(model_id, dict):
             model_id = Util.strip_id_prefix(model_id)
+        else:
+            model_id = Util.id_int_to_dict(model_id)
 
         table_name = cls.get_table_name()
         where_clause, where_args = self.clause_builder("WHERE", model_id)
@@ -107,11 +115,12 @@ class QueryHelper:
         self.cursor.execute(query, where_args)
 
         return self.cursor.fetchone()
+# ---------------------------------------------------------------------------------
 
     # call this Select?
     def get_many_rows_by_att(self, cls, query_data: dict) -> list[sqlite3.Row]:
 
-        Util.p("in get many rows QUERY", query_data=query_data)
+        # Util.p("in get many rows QUERY", query_data=query_data)
 
         table_name = cls.get_table_name()
 
@@ -124,6 +133,7 @@ class QueryHelper:
         self.cursor.execute(query, args)
         # Util.p("in get many rows", data=self.cursor.fetchone())
         return self.cursor.fetchall()
+# ---------------------------------------------------------------------------------
 
     def update_row_by_id(self, cls, set_clause_data: dict, where_clause_data: dict) -> bool:
         from utils.util import Util
@@ -148,6 +158,7 @@ class QueryHelper:
         self.conn.commit()  # need other place for this? need to commit for updates
 
         return self.cursor.rowcount > 0
+# ---------------------------------------------------------------------------------
 
     def clause_builder(self, clause_type: Literal["INSERT", "WHERE", "SET"], clause_data: dict) -> tuple[str, tuple]:
         from utils.util import Util
@@ -173,7 +184,7 @@ class QueryHelper:
 
         return clause, clause_values
 
-    #################################################################################################################
+# ---------------------------------------------------------------------------------
 
     def insert_builder(self, clause_data: dict | list) -> tuple[str, tuple]:
 
@@ -189,6 +200,7 @@ class QueryHelper:
         # Util.p("insert builder", query=clause)
 
         return clause, clause_values
+# ---------------------------------------------------------------------------------
 
     def insert_many(self, cls, query_data: list[dict], clause_type="INSERT") -> list:
         inserted_ids_list = []
@@ -200,6 +212,7 @@ class QueryHelper:
         # query = f"INSERT INTO {table_name} {attributes}"
 
         return inserted_ids_list
+# ---------------------------------------------------------------------------------
 
     def insert(self, cls, query_data: dict, clause_type="INSERT") -> int:
         """_summary_
@@ -217,35 +230,3 @@ class QueryHelper:
 
         self.cursor.execute(query, args)
         return self.cursor.lastrowid
-
-
-"""  clause_attributes = ""
-placeholders = ""
-clause_values = ()
-
-for key in clause_data:
-    clause_attributes += att_spacer.join([f"{(key)}"])
-    placeholders += att_spacer.join([",?"])
-    clause_values + tuple(clause_data[key]) """
-
-
-""" second part of insert builder for lists, dont need it anymroe
-        if isinstance(clause_data, list):
-
-            ##grab first dict and its keys // keys will be the same for all dicts
-            keys = list(clause_data[0].keys())
-
-            # Util.p("keys lista", keys=keys)
-
-            # create a list of "?"s as long as there are keys and join them
-            placeholders = _spacer.join(["?"] * len(keys))
-
-            clause_attributes = _spacer.join(f"({key})" for key in keys)
-            # Util.p("clause atts", clause_attributes=clause_attributes)
-
-            # create a list of tuples where each touple is the value for each dict at that key
-            clause_values = [
-                tuple(dictionary[key] for key in keys) for dictionary in clause_data
-            ]
-
-        else: """

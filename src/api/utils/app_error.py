@@ -9,12 +9,13 @@ class AppError(Exception):
         self.status_code = status_code
         self.context = context
 
-    def format(self) -> tuple[dict, int]:
+    @staticmethod
+    def format(error) -> tuple[dict, int]:
 
-        response = {"error": self.message}
-        if self.context:
-            response["context"] = self.context
-        return response, self.status_code
+        response = {"error": error.message}
+        if error.context:
+            response["context"] = error.context
+        return response, error.status_code
 
     @staticmethod
     def get_error_context(**kwargs):
@@ -29,7 +30,7 @@ class AppError(Exception):
 
 
 class NotFoundError(AppError):
-    def __init__(self, msg, status_code=404, context=None):
+    def __init__(self, msg, status_code=500, context=None):
 
         msg = f"Not found: {msg}"
 
@@ -39,7 +40,7 @@ class NotFoundError(AppError):
 class EmptyDataError(AppError):
     """Base error for valid requests with empty results."""
 
-    def __init__(self, msg, status_code=422, context=None):
+    def __init__(self, msg, status_code=500, context=None):
         msg = f"Empty data: {msg}"
 
         super().__init__(msg, status_code, context)
@@ -59,7 +60,18 @@ class ModelStateError(AppError):
 
 # adjust status code for this
 # front end must handle these codes..
-    def __init__(self, msg, status_code=409, context=None):
+    def __init__(self, msg, status_code=400, context=None):
         msg = f"Model State Error: {msg}"
+
+        super().__init__(msg, status_code, context)
+
+
+class PayloadError(AppError):
+    """Base error for mismatch in request payload """
+
+# adjust status code for this
+# front end must handle these codes..
+    def __init__(self, msg, status_code=400, context=None):
+        msg = f"Payload Error: {msg}"
 
         super().__init__(msg, status_code, context)
