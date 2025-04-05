@@ -3,7 +3,7 @@ from utils.util import Util
 from typing import Literal, TypedDict
 
 
-class ModelDict(TypedDict):
+class ModelDict(TypedDict):  # testing
     model_id: int | str
 
 
@@ -155,7 +155,7 @@ class QueryHelper:
        # Util.p("query.update", query=query, args=args)
 
         self.cursor.execute(query, args)
-        self.conn.commit()  # need other place for this? need to commit for updates
+        self.conn.commit()  # ! need other place for this? need to commit for updates
 
         return self.cursor.rowcount > 0
 # ---------------------------------------------------------------------------------

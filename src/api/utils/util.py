@@ -74,9 +74,10 @@ class Util:
 
         missing = [key for key in expected if key not in payload]
         unexpected = [key for key in payload if key not in expected]
-        if missing:
+
+        if missing or unexpected:
             raise PayloadError(
-                f"Missing or mismatching keys: {missing}. Unexpected: {unexpected}",
+                f"Missing or mismatching keys: {missing or 'none'}. Unexpected: {unexpected or 'none'}",
                 context=PayloadError.get_error_context(payload=payload,
                                                        missing=missing,
                                                        unexpected=unexpected,
@@ -231,7 +232,7 @@ class Util:
         return formatted
 # ---------------------------------------------------------------------------------
 
-    @staticmethod
+    @staticmethod  # debugging
     def s():
         import inspect
         return inspect.currentframe().f_back.f_code.co_name

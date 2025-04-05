@@ -10,6 +10,7 @@ from models.race import Race
 from models.horse import Horse
 from utils.util import Util
 from utils.app_error import AppError
+from utils.decorator import *
 
 from utils.db_instance import db
 
@@ -20,13 +21,8 @@ CORS(app)  # Enable CORS for all routes - remove if not needed
 
 
 """
-todo
-    set routes.py for new functionality
-
-
-
-
-add admin functionality
+todo set routes.py for new functionality   
+todo add admin functionality
 
 batchin:
     backend batching ok, need front end
@@ -36,7 +32,6 @@ batchin:
     next:
     -Operations Manager:
 ***need to commit for db inserts
-todo:
 
     //    -Add event - ok 
         edit event 
@@ -53,13 +48,16 @@ todo:
         -Scratch horse by (horse_num? the last inserted horse? does it matter?)
 
 """
-# todo : add check payload to routes
 
 # *====================ADMIN====================*
 
 
-@app.route("/admin/events/create", methods=["POST"])  # !is post
-def create_event():
+@app.route("/admin/events/create", methods=["POST"])
+@validate_payload_structure(expected_fields=['event_name',
+                                             'location',
+                                             'start_date',
+                                             'end_date'])
+def create_event(validated_payload):
     """Creates a new event using the provided event data.
 
 
@@ -102,18 +100,16 @@ Returns:
 
     """
 
-    data = Util.valid_payload(request.get_json(), expected=[
-        'event_name', 'location', 'start_date', 'end_date'])
-
-    return jsonify(Event.create(data)), 200
+    return jsonify(Event.create(validated_payload)), 200
 
 
 # ?---------------------------------------------------------------------------------------
 
 
 @app.route("/admin/races/close", methods=["POST"])
+@validate_payload_structure(expected_fields='race_id')
 @cross_origin()
-def close_race():
+def close_race(validated_payload):
     """Closes betting for a specific race.
 
 Args:
@@ -148,9 +144,7 @@ Returns:
             }
     """
 
-    data = Util.valid_payload(request.get_json(), expected=['race_id'])
-
-    return jsonify(Race.close(data)), 200
+    return jsonify(Race.close(validated_payload)), 200
 
 
 # ?---------------------------------------------------------------------------------------
@@ -160,8 +154,9 @@ Returns:
 
 
 @app.route("/ticket/purchase", methods=["POST"])
+@validate_payload_structure(expected_headers='order', expected_nested=['race_id', 'qtty'])
 @cross_origin()
-def ticket_purchase():
+def ticket_purchase(validated_payload):  # arg passed by validation decorator
     """Processes ticket purchase request for multiple races.
 
 Args:
@@ -201,28 +196,21 @@ Returns:
         }
 """
 
-    data = request.get_json()
-    # data = {"order": [{"race_id": 1, "qtty": 3}, {"race_id": 2, "qtty": 2}],
-    #       "status": [{'s1': "S1", 's2': "S2"}, {'s1': "S3", 's2': "S4"}]}
+    response = {'order': Ticket.batching(validated_payload['order'])}
 
-#    data = Util.valid_nested_payload(
- #       data,
-  #      ['order', 'status'],
-   #     [['race_id', 'qtty'], ['s1', 's2']])
+    for ticket_unit in response["order"]:
+        Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
 
-    # Util.p("data incoming web->api", data=data)
+    return jsonify(response), 201  #
 
-    data["order"] = Ticket.batching(data["order"])
-
-   # for ticket_unit in data["order"]:
-    #   Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
-    return jsonify(data), 201  # {"error": "TEEEST."}
+# ?---------------------------------------------------------------------------------------
 
 # *====================FETCHERS====================*
 
 
 @app.route("/events", methods=["GET"])
-def fetch_all_events():
+@validate_payload_structure(expecting_payload=False)
+def fetch_all_events(validated_payload):
     """Fetches all available event data.
 
 Args:
@@ -257,8 +245,9 @@ Returns:
 # ?---------------------------------------------------------------------------------------
 
 
-@app.route("/events/races", methods=["GET"])  # ok
-def fetch_all_event_races():
+@app.route("/events/races", methods=["GET"])
+@validate_payload_structure(expected_fields='event_id')
+def fetch_all_event_races(validated_payload):
     """Fetches all races associated with a given event.
 
 Args:
@@ -290,14 +279,15 @@ Returns:
         ]
     """
 
-    data = {'event_id': request.args.get('event_id')}
-    #!data = {'event_id': 1}
-    status = request.args.get("status")
+    # todo: implement filter if case needed
+    # todo: (expect 'status' for "all" or "open" to fetch all or open only races)
+    # todo: ensures staff can only sell tickets for open race.
+    # todo: If front is adjusted to display which races are closed this is not needed
 
-    if status is None:
-        status = "all"
+    # if status is None:
+    #   status = "all"
 
-    return jsonify(Event.get_races(data, status))
+    return jsonify(Event.get_races(validated_payload))
 # ?---------------------------------------------------------------------------------------
 
 #!# *====================DEBUGGIN====================*
@@ -327,6 +317,8 @@ def ticket_cancelation():
 
 #
 
+
+#!deprecated below this point, here just for reference################################################!!!!
 
 #########
 @app.route("/ticket/status", methods=["GET"])
@@ -368,7 +360,7 @@ def handle_app_error(e):
     return jsonify(response['error']), status
 
 
-""" 
+""" #!let it crash for now so we can see whats going on
 # for unexpected errors?
 @app.errorhandler(Exception)
 def handle_unexpected_error(e):

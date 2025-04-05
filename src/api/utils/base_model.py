@@ -11,7 +11,7 @@ class BaseModel(metaclass=BaseMeta):
     @classmethod
     def id_exists_in_db(cls, data: dict) -> bool:
 
-        Util.f("id_exists in db BASEMODEL")
+       # Util.f("id_exists in db BASEMODEL")
         exists = db.query.has_record(cls, data)
         if not exists:
             raise NotFoundError(

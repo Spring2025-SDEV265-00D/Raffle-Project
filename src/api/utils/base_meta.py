@@ -10,6 +10,11 @@ class FieldEnumMeta(Enum):
     def __init__(self, label):
         self.label = label
 
+    #!used this to grab the db attributes dynamically but it is not very intuitive and hidden
+    #!it is better to use the class attributes directly or a constants.py
+
+    #!has no influence on the code, keeping to see if theres a use for it
+
 
 class BaseMeta(type):
     def __new__(mcls, child_class_name, parent_classes, class_dict):
