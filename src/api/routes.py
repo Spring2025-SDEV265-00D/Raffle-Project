@@ -24,6 +24,8 @@ CORS(app)  # Enable CORS for all routes - remove if not needed
 todo set routes.py for new functionality   
 todo add admin functionality
 
+todo: implement debugger decorator
+
 batchin:
     backend batching ok, need front end
     -added check for closed races in batching
@@ -198,8 +200,8 @@ Returns:
 
     response = {'order': Ticket.batching(validated_payload['order'])}
 
-    for ticket_unit in response["order"]:
-        Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
+   # for ticket_unit in response["order"]:
+    #    Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
 
     return jsonify(response), 201  #
 
@@ -210,7 +212,7 @@ Returns:
 
 @app.route("/events", methods=["GET"])
 @validate_payload_structure(expecting_payload=False)
-def fetch_all_events(validated_payload):
+def fetch_all_events():
     """Fetches all available event data.
 
 Args:

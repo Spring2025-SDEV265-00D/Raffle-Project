@@ -5,39 +5,56 @@ class Util:
 
     @staticmethod
     def valid_nested_payload(
-        payload: dict,
+        payload: dict,  # json payload from front end
+
+        # passing single header: "header" or ["header"] //Multiple: ["header1", "header2"]
         expected_headers: list[str] | str,
+
+        # passing one or many keys for a single header: "key" or ["key"] or ["key1", "key2"]
+        # passing keys for multiple headers:[ ["keys_for_header[0]", ["keys_for_header[1]" ]
+        # Example:
+        #       expected_headers = ['order', 'status']
+        #       expected_nester = [['race_id', 'qtty'], ['code', 'message']]
         expected_nested: list[list[str]] | list[str] | str
     ) -> dict:
 
+        # * normalize input in case 1 header with 1 key to validate (can be passed as strings for convenience)
         if isinstance(expected_headers, str):
             expected_headers = [expected_headers]
+            # * same if only 1 key passed // skipped if 1 header and many keys
+            if isinstance(expected_nested, str):
+                expected_nested = [expected_nested]
 
-        if isinstance(expected_nested, str):
+        # *if a flat list is passed as expected_nested, theres only 1 header with nested data
+        # *wrap it in a list so we can zip it properly
+        if isinstance(expected_nested[0], str):
             expected_nested = [expected_nested]
 
-        if isinstance(expected_nested[0], str):
-            expected_nested = [expected_nested] * len(expected_headers)
-
-        # check headers
+        # check if headers are present in payload
         Util.valid_payload(payload, expected=expected_headers)
 
-        for header_index, header in enumerate(expected_headers):
-            nested_payload = payload[header]
+       # Util.p("unziped", expected_headers=expected_headers,
+       #        expected_nested=expected_nested)
 
-           # for index, key in enumerate(nested_payload):
-            for index, item in enumerate(nested_payload):
+        # if so, loop over only the ones that actually have nested data
+        headers_with_nested = list(zip(expected_headers, expected_nested))
 
-                try:
-                    Util.valid_payload(
-                        item, expected=expected_nested[header_index])
+        # Util.p("ziped", headers_with_nested=headers_with_nested)
 
-                except PayloadError as e:
-                    raise PayloadError(f"{e.message} Nested in {header}[{index}]",
-                                       context=PayloadError.get_error_context(payload=payload,
-                                                                              expected_headers=expected_headers,
-                                                                              expect_nested=expected_nested,
-                                                                              original_context=e.context))
+        for header, nested in headers_with_nested:
+
+            # Util.p("in loop", header=header, nested=nested)
+
+            try:
+                Util.valid_payload(payload=payload[header][0],
+                                   expected=nested)
+
+            except PayloadError as e:
+                raise PayloadError(f"{e.message} Nested in header: {header}",
+                                   context=PayloadError.get_error_context(payload=payload,
+                                                                          expected_headers=expected_headers,
+                                                                          expect_nested=expected_nested,
+                                                                          original_context=e.context))
 
         return payload
 
@@ -77,7 +94,7 @@ class Util:
 
         if missing or unexpected:
             raise PayloadError(
-                f"Missing or mismatching keys: {missing or 'none'}. Unexpected: {unexpected or 'none'}",
+                f"Missing or mismatching keys. Missing: {missing or 'none'} | Unexpected: {unexpected or 'none'}",
                 context=PayloadError.get_error_context(payload=payload,
                                                        missing=missing,
                                                        unexpected=unexpected,

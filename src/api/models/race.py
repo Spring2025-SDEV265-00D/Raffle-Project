@@ -1,6 +1,6 @@
 from enum import Enum
 from utils.util import Util
-from utils.base_model import BaseModel
+from models.base_model import BaseModel
 from utils.db_instance import db
 from utils.app_error import *
 

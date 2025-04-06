@@ -1,6 +1,6 @@
 from utils.db_instance import db
 from utils.util import Util
-from utils.base_meta import BaseMeta
+from models.base_meta import BaseMeta
 from utils.app_error import *
 
 

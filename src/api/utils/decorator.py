@@ -24,6 +24,8 @@ def validate_payload_structure(expected_fields=None, expected_headers=None, expe
             # *Handles both types of request, extracting data accordingly
             payload = request.get_json() if request.method == "POST" else request.args.to_dict()
 
+            # Util.p("in decorator payload", payload=payload)
+
             # *Support for no-payload routes, ensures nothing incoming
             if not expecting_payload:
                 if payload:
@@ -47,7 +49,7 @@ def validate_payload_structure(expected_fields=None, expected_headers=None, expe
                     expected=expected_fields
                 )
 
-            Util.p("in decorator", validated=validated)
+            # Util.p("in decorator", validated=validated)
 
             # *what is actually being passed on to the route
             kwargs["validated_payload"] = validated
