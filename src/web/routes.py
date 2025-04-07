@@ -20,7 +20,7 @@ def home():
 
 @app.route("/test")
 def test():
-    return render_template("ticketPurchaseTEST.html")
+    return render_template("testing.html")
 
 
 @app.route("/event/selection")
