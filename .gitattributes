@@ -1,6 +1,11 @@
+* export-ignore
+
+!/src/
+!/src/**
+
 
 **/__pycache__/* export-ignore
 
-src/data/sql/* export-ignore
+src/data/sql/ export-ignore
 
 src/web/templates/testing.html export-ignore
