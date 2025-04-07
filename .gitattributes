@@ -1,7 +1,10 @@
-* export-ignore
+README.md export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+LICENSE export-ignore
+frontEnd/ export-ignore
+planning/ export-ignore
 
-!/src/
-!/src/**
 
 
 **/__pycache__/* export-ignore
