@@ -1,10 +1,5 @@
 
-#avoid everything
-* export-ignore
 
-#except the app
-!/src/
-!/src/**
 
 #within the app, avoid caches and testing files
 **/__pycache__/ export-ignore
