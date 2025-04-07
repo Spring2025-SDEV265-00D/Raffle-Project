@@ -1,12 +1,6 @@
 
-
-
-#within the app, avoid caches and testing files
 **/__pycache__/* export-ignore
 
-#avoid sql testing scripts
 src/data/sql/* export-ignore
 
-#avoid frontend testing file
 src/web/templates/testing.html export-ignore
-
