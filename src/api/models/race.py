@@ -34,7 +34,7 @@ class Race(BaseModel):  # need error handling
             raise NotFoundError(
                 f"No races in record for event -> {event_id}", context=AppError.get_error_context(data=event_id))
 
-        return Util.handle_row_data(event_races_row_data)
+        return Util.handle_row_data(event_races_row_data, Race)
 
 # ---------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ class Race(BaseModel):  # need error handling
     def get_horses(race_data: dict, filter=None):
         from models.horse import Horse
         if Race.id_exists_in_db(race_data):
-            return Horse.get_horses_for_race(race_data)  #
+            return Horse.get_horses_for_race(race_data, filter)  #
 # ---------------------------------------------------------------------------------
 
     @staticmethod

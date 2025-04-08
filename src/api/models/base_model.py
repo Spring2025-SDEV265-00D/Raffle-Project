@@ -20,7 +20,7 @@ class BaseModel(metaclass=BaseMeta):
 
     @classmethod
     def get_table_name(cls):
-        return cls._TABLE
+        return cls.__name__.lower()
 
     @classmethod
     def get_data(cls, model_id: dict, filter=None):
@@ -34,7 +34,7 @@ class BaseModel(metaclass=BaseMeta):
             raise NotFoundError(f"Empty records for {cls.__name__} -> {model_id}",
                                 context=AppError.get_error_context(received_data=model_id))
 
-        return Util.handle_row_data(db_row, filter)
+        return Util.handle_row_data(db_row, cls, filter)
 
     @classmethod
     def get_all(cls, filter=None):
@@ -44,7 +44,7 @@ class BaseModel(metaclass=BaseMeta):
             raise NotFoundError(
                 f"Error fetching all {cls.__name__.lower()}s", context=AppError.get_error_context())
 
-        return Util.handle_row_data(db_table_rows, filter)
+        return Util.handle_row_data(db_table_rows, cls, filter)
 
     @classmethod
     def update_one(cls, set_clause_data: dict, where_clause_data: dict) -> None:

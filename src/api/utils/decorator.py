@@ -22,7 +22,10 @@ def validate_payload_structure(expected_fields=None, expected_headers=None, expe
             # needs to be more robust if using other methods besides POST and GET
             # todo: request.method in ("POST", "PUT", "PATCH", "DELETE"):
             # *Handles both types of request, extracting data accordingly
-            payload = request.get_json() if request.method == "POST" else request.args.to_dict()
+
+            payload = request.args.to_dict() if request.method == "GET" else request.get_json()
+           # payload = request.get_json() if request.method in (
+           #     "POST", "PATCH") else request.args.to_dict()
 
             # Util.p("in decorator payload", payload=payload)
 

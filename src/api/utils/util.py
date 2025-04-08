@@ -174,18 +174,18 @@ class Util:
 
         for unit in range(new_tickets):
             index = (tickets_sold + unit) % roster_size
-            next_horses.append({"horse_id": horses[index]})
+            next_horses.append(horses[index])
 
         return next_horses
 # ---------------------------------------------------------------------------------
 
     @staticmethod
-    def handle_row_data(data: list[dict] | dict, fields=None):
+    def handle_row_data(data: list[dict] | dict, model_class=None, fields=None):
 
         if isinstance(data, list):
-            return Util._handle_many(data, fields)
+            return Util._handle_many(data, model_class, fields)
 
-        return Util._handle_single(data, fields)
+        return Util._handle_single(data, model_class, fields)
 # ---------------------------------------------------------------------------------
 
     @staticmethod
@@ -207,46 +207,59 @@ class Util:
 # ---------------------------------------------------------------------------------
 
     @staticmethod
-    def _handle_single(row_data, fields=None):
+    def _handle_single(row_data, model_class, fields=None):
         row_data = dict(row_data)
+
+        # order of these two may need changing if desired field is entered as model_id
         row_data = Util._filter_by_field(row_data, fields)
+        row_data = Util.normalize_id(row_data, model_class)
 
         return row_data
 # ---------------------------------------------------------------------------------
 
     @staticmethod
-    def _handle_many(rows_data, fields=None):
+    def _handle_many(rows_data, model_class, fields=None):
 
-        rows_data = [Util._handle_single(row, fields) for row in rows_data]
+        rows_data = [
+            Util._handle_single(row, model_class, fields) for row in rows_data]
         return rows_data
 # ---------------------------------------------------------------------------------
 
-    # strips id prefix of list coming from front end
-    # {'race_id': 1, 'qtty': 3} -> {'id': 1, 'qtty': 3},
+    # revised to handle either case model_id -> id  or id ->model_id
+    from typing import Literal
+
     @staticmethod
-    def strip_id_prefix(data: list[dict] | dict):
-        only_one = False
+    def normalize_id(data: list[dict] | dict, model_class=None, norm_type: Literal["strip", "add"] = "add"):
+
+        if isinstance(data, str | int):
+            return Util.id_int_to_dict(data)
+
+        only_one: bool = False
+        model_key: str = f"{model_class.__name__.lower()}_id" if model_class is not None else ""
 
         if isinstance(data, dict):
             only_one = True
             data = [data]
 
-        formatted = []
+        formatted: list[dict] = []
 
-        for item in data:
-            formatted_item = {}
-            for key, value in item.items():
-                if key.endswith("_id"):
-                    formatted_item["id"] = value
-                else:
-                    formatted_item[key] = value
+        for dictionary in data:
+            formatted_pair: dict = {}
 
-            formatted.append(formatted_item)
+            for key, value in dictionary.items():
+                if norm_type == "add" and key == "id":
+                    formatted_pair[model_key] = value
+                    continue
 
-        if only_one:
-            formatted = formatted[0]
+                elif norm_type == "strip" and key == model_key or model_class is None:
+                    formatted_pair["id"] = value
+                    continue
 
-        return formatted
+                formatted_pair[key] = value
+
+            formatted.append(formatted_pair)
+
+        return formatted[0] if only_one else formatted
 # ---------------------------------------------------------------------------------
 
     @staticmethod  # debugging

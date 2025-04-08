@@ -28,16 +28,16 @@ def event_selection():
     return render_template("eventSelection.html")
 
 
-# check ticker status with reference_number
-@app.route("/ticket/status")
-def ticket_status():
-    return render_template("ticketStatus.html")
-
-
 # lets choose event and race for ticket generation
 @app.route("/ticket/purchase")
 def ticket_purchase():
     return render_template("ticketPurchase.html")
+
+
+# check ticker status with reference_number
+@app.route("/ticket/status")
+def ticket_status():
+    return render_template("ticketStatus.html")
 
 
 @app.route("/ticket/cancel")

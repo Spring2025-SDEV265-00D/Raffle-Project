@@ -38,9 +38,8 @@ batchin:
     //    -Add event - ok 
         edit event 
         
-    //   -Add race with horses to event - ok, done in transaction Event.add_races
-      *          **currently handles only a single race -> need update to handle multiple races if case valid
-       *         **expects frontend data such as {event_id : N, qtty: n} where n, is the # of horses to add in that race
+        
+      **expects frontend data such as {event_id : N, qtty: n} where n, is the # of horses to add in that race
         
         -delete/edit races
             -Cascade on delete? ->will produce several race and horse _id gaps over time (matters?)
@@ -108,7 +107,7 @@ Returns:
 # ?---------------------------------------------------------------------------------------
 
 
-@app.route("/admin/races/close", methods=["POST"])
+@app.route("/admin/races/close", methods=["PATCH"])
 @validate_payload_structure(expected_fields='race_id')
 @cross_origin()
 def close_race(validated_payload):
@@ -200,8 +199,8 @@ Returns:
 
     response = {'order': Ticket.batching(validated_payload['order'])}
 
-    for ticket_unit in response["order"]:
-        Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
+    # for ticket_unit in response["order"]:
+    # Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
 
     return jsonify(response), 201  #
 
@@ -212,6 +211,7 @@ Returns:
 
 @app.route("/events", methods=["GET"])
 @validate_payload_structure(expecting_payload=False)
+@cross_origin()
 def fetch_all_events(validated_payload=None):
     """Fetches all available event data.
 
@@ -240,6 +240,8 @@ Returns:
         ]
     """
 
+    Util.p("in routes", validated_payload=validated_payload)  # debug
+
     filter = None  # set filter with expected attributes
     return jsonify(Event.get_all(filter))
 
@@ -249,7 +251,8 @@ Returns:
 
 @app.route("/events/races", methods=["GET"])
 @validate_payload_structure(expected_fields='event_id')
-def fetch_all_event_races(validated_payload):
+@cross_origin()
+def fetch_races_for_event(validated_payload):
     """Fetches all races associated with a given event.
 
 Args:
@@ -289,27 +292,38 @@ Returns:
     # if status is None:
     #   status = "all"
 
+   # Util.p("fetch races route", incoming=request.args.to_dict())
+    # Util.p("fetch races route", validated_payload=validated_payload)
+
+    # (validated_payload))
     return jsonify(Event.get_races(validated_payload))
 # ?---------------------------------------------------------------------------------------
 
+
+@app.route("/events/races/horses", methods=["GET"])
+@validate_payload_structure(expected_fields='race_id')
+def fetch_horses_for_race(validated_payload):
+
+    # can take a filter to fetch only specific data
+    filter = None
+
+    return jsonify(Race.get_horses(validated_payload, filter))
 #!# *====================DEBUGGIN====================*
 
 
 @app.route("/", methods=["GET"])
 def testing():
 
-    data = {"order": [{"race_id": 1, "qtty": 3}, {"race_id": 2, "qtty": 2}],
-            "status": [{'s1': "S1", 's2': "S2"}, {'s1': "S3", 's2': "S4"}]}
+    # data = {"order": [{"race_id": 1, "qtty": 3}, {"race_id": 2, "qtty": 2}],
+    #       "status": [{'s1': "S1", 's2': "S2"}, {'s1': "S3", 's2': "S4"}]}
 
-    data = Util.valid_nested_payload(data,
-                                     expected_headers=['order', 'status'],
-                                     expected_nested=[['race_id', 'qtty'], ['s1', 's2']])
+    data = Race.get_horses({'race_id': 1})
     return jsonify(data)
 #!# *====================DEBUGGIN====================*
 
 
 @app.route("/ticket/cancel", methods=["POST"])  # ! not sure if this is needed
-def ticket_cancelation():
+def ticket_refund():
 
     data = request.get_json()
 

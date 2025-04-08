@@ -18,8 +18,10 @@ class QueryHelper:
     def has_record(self, cls, model_id: dict | str | int) -> bool:
         table_name = cls.get_table_name()
 
+        # Util.p("in has record", incoming=model_id)
+
         if isinstance(model_id, dict):
-            model_id = Util.strip_id_prefix(model_id)
+            model_id = Util.normalize_id(model_id, cls, "strip")
         else:
             model_id = Util.id_int_to_dict(model_id)
         where_clause, where_args = self.clause_builder("WHERE", model_id)
@@ -58,7 +60,7 @@ class QueryHelper:
 
     def ticket_count_for_race(self, race_id: dict) -> int:
 
-        data = Util.strip_id_prefix(race_id)
+        data = Util.normalize_id(race_id, None, "strip")
         id_value = data['id']
         # Util.f("in ticket cout race QUERY")
 
@@ -101,10 +103,10 @@ class QueryHelper:
 
     def get_row_by_id(self, cls, model_id: dict | str | int) -> sqlite3.Row:  #
 
-        if isinstance(model_id, dict):
-            model_id = Util.strip_id_prefix(model_id)
-        else:
-            model_id = Util.id_int_to_dict(model_id)
+        #        if isinstance(model_id, dict):
+        model_id = Util.normalize_id(model_id, cls, "strip")
+#        else:
+#            model_id = Util.normalize_id(model_id)
 
         table_name = cls.get_table_name()
         where_clause, where_args = self.clause_builder("WHERE", model_id)
@@ -139,7 +141,7 @@ class QueryHelper:
         from utils.util import Util
 
         table_name = cls.get_table_name()
-        where_clause_data = Util.strip_id_prefix(where_clause_data)
+        where_clause_data = Util.normalize_id(where_clause_data, cls, "strip")
 
         # Util.p("query update row by id", cls=cls, where=where_clause_data)
 
@@ -190,6 +192,8 @@ class QueryHelper:
 
         # clause_data = {"horse_idT": 1, "horseNUMM": 33}
 
+        # Util.p("insert builder", clause_data=clause_data)
+
         _spacer = ", "
         clause_attributes = _spacer.join([f"{key}" for key in clause_data])
         placeholders = _spacer.join(("?") for key in clause_data)
@@ -203,6 +207,9 @@ class QueryHelper:
 # ---------------------------------------------------------------------------------
 
     def insert_many(self, cls, query_data: list[dict], clause_type="INSERT") -> list:
+
+        # Util.p("insert many", query_data=query_data)
+
         inserted_ids_list = []
 
         for dictionary in query_data:

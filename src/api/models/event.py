@@ -43,7 +43,7 @@ class Event(BaseModel):
 
         # new_event_id = Util.id_int_to_dict(new_event_id)
         new_event_data = Event.get_data(new_event_id)
-        return Util.handle_row_data(new_event_data)
+        return Util.handle_row_data(new_event_data, Event)
 # ---------------------------------------------------------------------------------
 
     ############################# Tried and Tested #############################

@@ -19,14 +19,14 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
         raceList.innerHTML = '';
 
         races.forEach((race) => {
-            console.log(race.id);
+            console.log(race.race_id);
             raceList.innerHTML += `<li>
             <section>
                 <div class="display-6 col-md-8 text-md-start">
                     Race - ${race.race_number}
                 </div>
                 <div>
-                    <select class="col-md-8" id="race-${race.id}">
+                    <select class="col-md-8" id="race-${race.race_id}">
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
             const ticketLim = 10;
 
             races.forEach((race) => {
-                const selectElement = document.getElementById(`race-${race.id}`);
+                const selectElement = document.getElementById(`race-${race.race_id}`);
                 
                 if (selectElement) {
                     const selectedValue = selectElement.value; 
@@ -71,11 +71,11 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 
                     if (!isNaN(quantity) && quantity > 0) {
                         quantities.push(quantity);
-                        RaceIDs.push(race.id);
+                        RaceIDs.push(race.race_id);
                     }
 
                 } else {
-                    console.error(`Select element for raceId ${race.id} not found.`);
+                    console.error(`Select element for raceId ${race.race_id} not found.`);
                 }
             });
 
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 
                   const result = await thisResponse.json();
                   console.log("Ticket Purchase Response: ", result);
-                  console.log("Ticket Purchase Order ID: ", result.order[0].id)
+                  console.log("Ticket Purchase Order ID: ", result.order[0].ticket_id)
                   
                   // Generate ticket content and display the modal
                   ticketContent.innerHTML = await generateTicket(result);
@@ -149,7 +149,7 @@ async function generateTicket(data) {
   for (let i = 0; i < data.order.length; i++) {
     html += `
         <div class="ticket-content">
-            <p><strong>Ticket ID:</strong> ${data.order[i].id}</p>
+            <p><strong>Ticket ID:</strong> ${data.order[i].ticket_id}</p>
             <p><strong>Event:</strong> ${data.order[i].event_name}</p>
             <p><strong>Bought:</strong> ${data.order[i].created_dttm}</p>
             <p><strong>Race Number:</strong> ${data.order[i].race_number}</p>

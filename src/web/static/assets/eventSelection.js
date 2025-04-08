@@ -13,7 +13,7 @@ addEventListener("DOMContentLoaded", async function () {
 
         events.forEach(event => {
             let option = document.createElement("option");
-            option.value = event.id;//proper event id is stored in value
+            option.value = event.event_id;//proper event id is stored in value
             option.textContent = `Name: ${event.event_name} - City: ${event.location} Start: ${event.start_date} End: ${event.end_date}`;
             eventDropdown.appendChild(option);
         });

@@ -16,7 +16,7 @@ class Horse(BaseModel):
 
     # returns a list of horse_ids of horses in a race by race_id
     @staticmethod
-    def get_horses_for_race(id_data: dict, filter="all") -> list:
+    def get_horses_for_race(id_data: dict, filter: list[str] | str = None) -> list:
 
         query_data = id_data | {
             Horse.Status.LABEL.value: Horse.Status.ACTIVE.value}
@@ -26,9 +26,9 @@ class Horse(BaseModel):
             raise EmptyDataError(
                 f"No horses in record for race -> {id_data}", context=AppError.get_error_context(id_data=id_data))
 
-        horse_ids = [horse["id"] for horse in race_roster]
+        # horse_ids = [horse["id"] for horse in race_roster]
 
-        return horse_ids
+        return Util.handle_row_data(race_roster, Horse, filter)  # horse_ids
     ############################# Tried and Tested #############################
 # ---------------------------------------------------------------------------------
 

@@ -9,9 +9,11 @@ from enum import Enum
 class Ticket(BaseModel):
 
     class Status(Enum):
-        ACTIVE = 0
-        REDEEMED = 1
-        CANCELED = 2
+        ACTIVE = 0  # Default status
+        REDEEMED = 1  # Once a winning ticket is paid out
+
+        # Once a refund has been issued. (Horse scratched after ticket sales have begun)
+        REFUNDED = 2
         LABEL = 'status'
 
     ############################# Tried and Tested #############################
@@ -68,7 +70,7 @@ class Ticket(BaseModel):
                 raise ModelStateError(
                     f"Race -> {race_id_data} is closed. Cannot sell tickets.")
 
-            horses_in_race = Race.get_horses(race_id_data)
+            horses_in_race = Race.get_horses(race_id_data, 'id')
             # Util.p('ticket handle order', horses_in_race=horses_in_race)
 
             ticket_count = Race.get_ticket_count(race_id_data)
@@ -81,7 +83,7 @@ class Ticket(BaseModel):
             new_ticket_ids.extend(tickets_for_this_race)
 
         order_rows = db.query.get_printable_ticket(new_ticket_ids)
-        return Util.handle_row_data(order_rows)
+        return Util.handle_row_data(order_rows, Ticket)
 # ---------------------------------------------------------------------------------
 
     @staticmethod
@@ -91,13 +93,13 @@ class Ticket(BaseModel):
 
         ticket_status = Ticket.Status(ticket_data[LABEL])
 
-        if ticket_status in (Ticket.Status.CANCELED, Ticket.Status.REDEEMED):
+        if ticket_status in (Ticket.Status.REFUNDED, Ticket.Status.REDEEMED):
             raise ModelStateError(
                 f"Ticket -> {ticket_id} was already {ticket_status.name.lower()}.", context=AppError.get_error_context(ticket_id=ticket_id))
 
-        set_data = {LABEL: Ticket.Status.CANCELED.value}
+        set_data = {LABEL: Ticket.Status.REFUNDED.value}
 
         Ticket.update_one(set_data, ticket_id)
-        return {"message": f"Ticket -> {ticket_id} has been canceled."}
+        return {"message": f"Ticket -> {ticket_id} has been marked as {Ticket.Status.REFUNDED.name.lower()}."}
 
     ############################# Tried and Tested #############################

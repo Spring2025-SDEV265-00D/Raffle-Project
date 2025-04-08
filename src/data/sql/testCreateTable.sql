@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS ticket (
     status INTEGER NOT NULL DEFAULT 0 CHECK (status IN (0, 1, 2)),
     --0: "Issued/Valid"
     --1: "Redeemed"
-    --2: "Void/Canceled"
+    --2: "Refunded"
 
 
     FOREIGN KEY (horse_id) REFERENCES horse(id)
