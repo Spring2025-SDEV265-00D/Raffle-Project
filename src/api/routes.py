@@ -50,6 +50,7 @@ batchin:
 
 """
 
+
 # *====================ADMIN====================*
 
 
@@ -103,7 +104,14 @@ Returns:
 
     return jsonify(Event.create(validated_payload)), 200
 
+# ?---------------------------------------------------------------------------------------
 
+
+""" @app.route("/admin/events/race/create", methods=["POST"])
+@validate_payload_structure(expected_fields=
+def create_race(validated_payload) """
+# todo current 'add_race()' functionality takes a race_id and qtty of horses to add
+# todo need adjustment
 # ?---------------------------------------------------------------------------------------
 
 
@@ -144,6 +152,8 @@ Returns:
                 "error": "Model State Error: Race -> {'race_id': 1} has already been closed."
             }
     """
+
+    Util.p("in close raace route api", validated_payload=validated_payload)
 
     return jsonify(Race.close(validated_payload)), 200
 
@@ -207,6 +217,20 @@ Returns:
 # ?---------------------------------------------------------------------------------------
 
 # *====================FETCHERS====================*
+
+
+# todo: merge events/info and events? need update
+
+@app.route("/event/info", methods=["GET"])
+@validate_payload_structure(expected_fields='event_id')
+@cross_origin()
+def fetch_event(validated_payload):
+
+    filter = None
+    return jsonify(Event.get_data(validated_payload, filter))
+
+
+# ?---------------------------------------------------------------------------------------
 
 
 @app.route("/events", methods=["GET"])
