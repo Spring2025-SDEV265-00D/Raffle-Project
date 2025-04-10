@@ -209,8 +209,8 @@ Returns:
 
     response = {'order': Ticket.batching(validated_payload['order'])}
 
-    for ticket_unit in response["order"]:
-        Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
+    # for ticket_unit in response["order"]:
+    # Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
 
     return jsonify(response), 201  #
 
@@ -372,18 +372,6 @@ def testing():
     data = Race.get_horses({'race_id': 1})
     return jsonify(data)
 #!# *====================DEBUGGIN====================*
-
-
-@app.route("/ticket/cancel", methods=["POST"])  # ! not sure if this is needed
-def ticket_refund():
-
-    data = request.get_json()
-
-    return jsonify(Ticket.cancel(data)), 200
-
-    ############################# Tried and Tested #############################
-
-#
 
 
 #!deprecated below this point, here just for reference################################################!!!!
