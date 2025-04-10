@@ -6,6 +6,7 @@ from utils.app_error import *
 
 
 class Horse(BaseModel):
+    WINNER = 1
 
     class Status(Enum):
         ACTIVE = 0
@@ -15,6 +16,7 @@ class Horse(BaseModel):
     ############################# Tried and Tested #############################
 
     # returns a list of horse_ids of horses in a race by race_id
+
     @staticmethod
     def get_horses_for_race(id_data: dict, filter: list[str] | str = None) -> list:
 
@@ -48,8 +50,22 @@ class Horse(BaseModel):
         # new_horses_ids = db.query.insert_many(Horse, insert_data)
         db.query.insert_many(Horse, insert_data)
 
-
         # ---------------------------------------------------------------------------------
+
+    @staticmethod
+    def is_winner(horse_id: dict) -> bool:
+
+        horse_data = Horse.get_data(horse_id, 'winner')
+
+        return horse_data['winner'] == Horse.WINNER
+
+    @staticmethod
+    def is_scratched(horse_id: dict) -> bool:
+
+        horse_data = Horse.get_data(horse_id, 'scratched')
+        return horse_data['scratched'] == Horse.Status.SCRATCHED.value
+
+
 """ 
  try:
         x = db.query.get_count(cls, query_data)

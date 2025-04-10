@@ -143,6 +143,8 @@ class QueryHelper:
         table_name = cls.get_table_name()
         where_clause_data = Util.normalize_id(where_clause_data, cls, "strip")
 
+        # Util.p("query update row by id", data=where_clause_data)
+
         # Util.p("query update row by id", cls=cls, where=where_clause_data)
 
         set_clause_query, set_clause_args = self.clause_builder(
@@ -154,7 +156,7 @@ class QueryHelper:
         query = f"UPDATE {table_name} {set_clause_query} {where_clause_query}"
         args = set_clause_args + where_clause_args
 
-       # Util.p("query.update", query=query, args=args)
+        # Util.p("query.update", query=query, args=args)
 
         self.cursor.execute(query, args)
         self.conn.commit()  # ! need other place for this? need to commit for updates

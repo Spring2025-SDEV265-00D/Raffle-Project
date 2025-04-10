@@ -143,15 +143,15 @@ class Util:
     @staticmethod
     def split_dict(data: dict) -> tuple[dict, dict]:
         id_data = {}
-        qtty_data = {}
+        other_data = {}
 
         for key, value in data.items():
             if key.endswith("_id"):
                 id_data = {key: value}
             else:
-                qtty_data = {key: value}
+                other_data = {key: value}
 
-        return id_data, qtty_data
+        return id_data, other_data
 
         # dict1, dict2 = [{key:value} for key, value in data.items()]
 

@@ -31,6 +31,13 @@ def manage_race():
 
 # *-----------------SELLERS-----------------*
 
+# @app.route("/ticket/info", methods=["GET"])
+app.route("/ticket/info")
+
+
+def update_ticket():
+    return render_template("UPDATE_TICKET.html")  # !adjust it here
+
 
 # home page, nothing here yet
 @app.route("/")

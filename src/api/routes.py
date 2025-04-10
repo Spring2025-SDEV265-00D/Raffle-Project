@@ -209,17 +209,45 @@ Returns:
 
     response = {'order': Ticket.batching(validated_payload['order'])}
 
-    # for ticket_unit in response["order"]:
-    # Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
+    for ticket_unit in response["order"]:
+        Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
 
     return jsonify(response), 201  #
 
 # ?---------------------------------------------------------------------------------------
 
+
+@app.route("/ticket/update", methods=["POST"])
+@validate_payload_structure(expected_fields=['ticket_id', 'request'])
+@cross_origin()
+def ticket_update(validated_payload):
+
+   # Util.p("api route tik update", validated_payload=validated_payload)
+
+    # ticket_data = {'ticket_id': 22, 'request': "refund"}
+
+    # return jsonify(Ticket.update_standing(ticket_data)), 200
+    return jsonify(Ticket.update_standing(validated_payload)), 200
+
+# ?---------------------------------------------------------------------------------------
+
+
 # *====================FETCHERS====================*
 
 
-# todo: merge events/info and events? need update
+@app.route("/ticket/info", methods=["GET"])
+@validate_payload_structure(expected_fields='ticket_id')
+@cross_origin()
+def fetch_ticket(validated_payload):
+
+    filter = None
+
+    return jsonify(Ticket.get_data(validated_payload))
+
+    # ?---------------------------------------------------------------------------------------
+
+    # todo: merge events/info and events? need update
+
 
 @app.route("/event/info", methods=["GET"])
 @validate_payload_structure(expected_fields='event_id')

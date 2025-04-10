@@ -50,7 +50,7 @@ class BaseModel(metaclass=BaseMeta):
     def update_one(cls, set_clause_data: dict, where_clause_data: dict) -> None:
         # needs id_exists check if not called before// ok:ticket.cancel, stop_betting
 
-        Util.p("basemodel update one", whereClause=where_clause_data)
+       # Util.p("basemodel update one", whereClause=where_clause_data)
 
         if not db.query.update_row_by_id(cls, set_clause_data, where_clause_data):
             raise DatabaseError(
