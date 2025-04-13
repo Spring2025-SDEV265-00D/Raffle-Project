@@ -19,14 +19,14 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
         raceList.innerHTML = '';
 
         races.forEach((race) => {
-            console.log(race.id);
+            console.log(race.race_id);
             raceList.innerHTML += `<li>
             <section>
                 <div class="display-6 col-md-8 text-md-start">
-                    Race - ${race.race_number}
+                    Race - ${race.race_id}
                 </div>
                 <div>
-                    <select class="col-md-8" id="race-${race.id}">
+                    <select class="col-md-8" id="race-${race.race_id}">
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
             const ticketLim = 10;
 
             races.forEach((race) => {
-                const selectElement = document.getElementById(`race-${race.id}`);
+                const selectElement = document.getElementById(`race-${race.race_id}`);
                 
                 if (selectElement) {
                     const selectedValue = selectElement.value; 
@@ -71,11 +71,11 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 
                     if (!isNaN(quantity) && quantity > 0) {
                         quantities.push(quantity);
-                        RaceIDs.push(race.id);
+                        RaceIDs.push(race.race_id);
                     }
 
                 } else {
-                    console.error(`Select element for raceId ${race.id} not found.`);
+                    console.error(`Select element for raceId ${race.race_id} not found.`);
                 }
             });
 
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 
                   const result = await thisResponse.json();
                   console.log("Ticket Purchase Response: ", result);
-                  console.log("Ticket Purchase Order ID: ", result.order[0].id)
+                  console.log("Ticket Purchase Order ID: ", result.order[0].ticket_id)
                   
                   // Generate ticket content and display the modal
                   ticketContent.innerHTML = await generateTicket(result);
@@ -144,12 +144,8 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 });
 
 
-//! This is missing info for the event number, but im not sure if if will be removed 
-//! once the design is approved so I just put a placeholder in for now
-//?     Still waiting on feedback for if the license on the ticket needs to change per 
-//?     event and if we need the event number, so those parts might need changed. For
-//?     now there are placeholders for them
 // This function generates the ticket for displaying/printing, and can deal with up to 10 total
+//* The design of this ticket is outdated, it will be updated later
 async function generateTicket(data) {
     let html = '<div class="ticket">';
     html += '<h2 align="center" id="ticketTitle">' + `${data.order[0].event_name}` + '</h2>';
@@ -161,7 +157,7 @@ async function generateTicket(data) {
 
     // add all tickets into it
     //* there is a limit of 10 tickets that can be displayed
-    for (let i = 0; i < data.order.length && i < 10; i++) { html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].id}</li></div>`; }
+    for (let i = 0; i < data.order.length && i < 10; i++) { html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`; }
     
     html += '</div>';
     html += '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
@@ -177,7 +173,7 @@ async function generateTicket(data) {
     html += '<div>';
     html += '<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>';
     html += '<div class="line">';
-    for (let i = 0; i < data.order.length && i < 10; i++) { html += '<div><li>' + `1` + '</li><li>' + `${data.order[i].race_number}` + '</li><li>' + `${data.order[i].horse_number}` + '</li><li>' + `${data.order[i].id}` + '</li></div>'; }
+    for (let i = 0; i < data.order.length && i < 10; i++) { html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`; }
     html += '</div>';
     html += '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
     html += '</div>';

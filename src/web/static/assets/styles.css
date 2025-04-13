@@ -20,98 +20,103 @@ section {
 
 /* Modal styling */
 .modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
+display: none;
+position: fixed;
+z-index: 1;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-  background-color: white;
-  margin: 10% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 900px;
+background-color: white;
+margin: 10% auto;
+padding: 20px;
+border: 1px solid #888;
+width: 80%;
+max-width: 900px;
 }
 
 /*Ticket styling*/
 .ticketTitle {
-  text-align: center;
-  font-size: 40px;
-  margin-top: 10px;
+text-align: center;
+font-size: 40px;
+margin-top: 10px;
 }
 
 .ticketImg {
-  width: 100px;
-  height: 400px;
+width: 100px;
+height: 400px;
 }
 
 #img2 {
-  transform: scaleX(-1);
+transform: scaleX(-1);
 }
 
 li {
-  display: inline;
-  padding-left: 10px;
-  padding-right: 10px;
+display: inline;
+padding-left: 10px;
+padding-right: 10px;
 }
 
 .ticket {
-  text-align: center;
-  font-size: 20px;
-  width: 816px;
-  height: 528px;
+text-align: center;
+font-size: 20px;
+width: 816px;
+height: 528px;
 }
 
 .line * {
-  padding-left: 42px;
-  padding-right: 42px;
+padding-left: 42px;
+padding-right: 42px;
 }
 
 .textBottom {
-  font-size: 15px;
-  text-align: center;
-  padding-top: 25px;
+font-size: 15px;
+text-align: center;
+padding-top: 25px;
+position: absolute;
+top: 500px;
+left: 300px;
 }
 
 #ticket2 {
-  visibility: hidden;
-  /* max-width: 0px;
-  max-height: 0px; */
-  position: absolute;
+visibility: hidden;
+position: absolute;
 }
 
 /*Printing styling*/
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  .ticket * {
-    visibility: visible;
-  }
-  .ticket {
-    position: absolute;
-    border: none;
-    top: -30px;
-    left: -50px;
-  }
-  #img1 {
-    position: absolute;
-    left: 50px;
-  }
-  #img2 {
-    position: absolute;
-    right: 50px;
-  }
-  .modal-buttons {
-    display: none;
-  }
-  #ticket2 {
-    top: 465px;
-  }
+body * {
+  visibility: hidden;
+}
+.ticket * {
+  visibility: visible;
+}
+.ticket {
+  position: absolute;
+  border: none;
+  top: -30px;
+  left: -50px;
+}
+.textBottom {
+  top: 370px;
+  left: 287px;
+}
+#ticket2 {
+  top: 465px;
+}
+#img1 {
+  position: absolute;
+  left: 50px;
+}
+#img2 {
+  position: absolute;
+  right: 50px;
+}
+.modal-buttons {
+  display: none;
+}
 }
