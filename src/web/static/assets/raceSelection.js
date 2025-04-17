@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
             raceList.innerHTML += `<li>
             <section>
                 <div class="display-6 col-md-8 text-md-start">
-                    Race - ${race.race_number}
+                    Race - ${race.race_id}
                 </div>
                 <div>
                     <select class="col-md-8" id="race-${race.race_id}">
@@ -143,20 +143,46 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
   }
 });
 
-async function generateTicket(data) {
-  let html = '';
 
-  for (let i = 0; i < data.order.length; i++) {
-    html += `
-        <div class="ticket-content">
-            <p><strong>Ticket ID:</strong> ${data.order[i].ticket_id}</p>
-            <p><strong>Event:</strong> ${data.order[i].event_name}</p>
-            <p><strong>Bought:</strong> ${data.order[i].created_dttm}</p>
-            <p><strong>Race Number:</strong> ${data.order[i].race_number}</p>
-            <p><strong>Horse Number:</strong> ${data.order[i].horse_number}</p>
-        </div>
-  `;
-  }
+// This function generates the ticket for displaying/printing, and can deal with up to 10 total
+//* The design of this ticket is outdated, it will be updated later
+async function generateTicket(data) {
+    let html = '<div class="ticket">';
+    html += '<h2 align="center" id="ticketTitle">' + `${data.order[0].event_name}` + '</h2>';
+    html += '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_1.png" alt=":(">'; // alt isnt descriptive because it would 
+    html += '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_1.png" alt="):">';// mess up the format of everything
+    html += '<div>';
+    html += '<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>';
+    html += '<div class="line">';
+
+    // add all tickets into it
+    //* there is a limit of 10 tickets that can be displayed
+    for (let i = 0; i < data.order.length && i < 10; i++) { html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`; }
+    
+    html += '</div>';
+    html += '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
+    html += '</div>';
+
+    
+    // the second ticket is always there, but can only be seen when printing
+    // the only diference is just the id in the first div
+    html += '<div class="ticket" id="ticket2">';
+    html += '<h2 align="center" id="ticketTitle">' + `${data.order[0].event_name}` + '</h2>';
+    html += '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_1.png" alt=":(">';
+    html += '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_1.png" alt="):">';
+    html += '<div>';
+    html += '<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>';
+    html += '<div class="line">';
+    for (let i = 0; i < data.order.length && i < 10; i++) { html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`; }
+    html += '</div>';
+    html += '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
+    html += '</div>';
 
   return html;
 }
+
+
+// Print ticket when print button is clicked
+printBtn.addEventListener("click", function () {
+    window.print();
+  });
