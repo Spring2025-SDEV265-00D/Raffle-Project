@@ -47,7 +47,9 @@
       </div>
     </div>
   </div>
-  <script src="{{ url_for('static', filename='assets/eventAdd.js') }}" defer></script>
+  <script> const API_BASE_URL = "{{ api_base_url }}"; </script>
+
+  <script type="module" src="/static/assets/eventAdd.js" defer></script>
 
   <!--   <script src="add-event.js"></script>
  -->

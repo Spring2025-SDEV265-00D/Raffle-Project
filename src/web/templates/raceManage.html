@@ -30,10 +30,10 @@
         <form id="addRaceForm" class="form-inline">
           <div class="form-group mr-2">
 
-            <!-- NOT NECESSARY FOR ADDING RACE -->
 
-            <!--  <label for="raceNumber" class="mr-2">Race Number:</label> -->
-            <!--             <input type="number" class="form-control" id="raceNumber" min="1" required> -->
+
+            <label for="raceNumber" class="mr-2">Race Number:</label>
+            <input type="number" class="form-control" id="raceNumber" min="1" required>
           </div>
           <button type="submit" class="btn btn-primary">Add Race</button>
         </form>
@@ -56,9 +56,8 @@
 
     <button id="backBtn" class="btn btn-secondary mt-3">Back to Events</button>
   </div>
-  <script src="{{ url_for('static', filename='assets/raceManage.js') }}" defer></script>
-
-  <!--   <script src="manage-races.js"></script> -->
+  <script> const API_BASE_URL = "{{ api_base_url }}"; </script>
+  <script type="module" src="/static/assets/raceManage.js" defer></script>
 </body>
 
 </html>

@@ -1,3 +1,5 @@
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const today = new Date();
   const nextWeek = new Date();
@@ -45,7 +47,7 @@ async function submitEvent(e) {
   };
 
   try {
-    const response = await fetch('http://localhost:5000/admin/events/create', {
+    const response = await fetch(`${API_BASE_URL}/admin/events/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(eventData)

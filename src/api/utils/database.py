@@ -1,9 +1,12 @@
+from utils.util import Util
 import sqlite3
 from flask import g
 from pathlib import Path
 from utils.queries import QueryHelper
 
-DATABASE_PATH = Path("data/raffle.db")
+
+BASE = Path(__file__).resolve().parent.parent.parent
+DATABASE_PATH = BASE / Path("data/raffle.db")
 
 
 class Database:

@@ -1,3 +1,5 @@
+
+
 let currentEventId = null;
 let eventDetails = {};
 
@@ -27,7 +29,7 @@ async function loadEventDetails() {
   currentEventId = eventId;
 
   try {
-    const response = await fetch(`http://localhost:5000/event/info?event_id=${currentEventId}`);
+    const response = await fetch(`${API_BASE_URL}/event/info?event_id=${currentEventId}`);
     if (!response.ok) {
       throw new Error('Failed to fetch events');
     }
@@ -65,7 +67,7 @@ async function loadRaces() {
   const racesTableBody = document.getElementById("racesTableBody");
   try {
     racesTableBody.innerHTML = `<tr><td colspan="5" class="text-center">Loading races...</td></tr>`;
-    const response = await fetch(`http://localhost:5000/events/races?event_id=${currentEventId}`);
+    const response = await fetch(`${API_BASE_URL}/events/races?event_id=${currentEventId}`);
     if (!response.ok) {
       throw new Error('Failed to fetch races');
     }
@@ -112,7 +114,7 @@ async function loadRaces() {
         if (confirm('Are you sure you want to close this race and stop participation?')) {
           try {
 
-            const response = await fetch("http://localhost:5000/admin/races/close", {
+            const response = await fetch(`${API_BASE_URL}/admin/races/close`, {
               method: 'PATCH',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ race_id: raceId })
@@ -140,12 +142,12 @@ async function addRace(e) {
   //const raceNumber = document.getElementById("raceNumber").value;
 
   try {
-    const response = await fetch('/events/races', {  //needs backend
+    const response = await fetch(`${API_BASE_URL}/events/races`, {  //needs backend
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         event_id: currentEventId,
-        //race_number: raceNumber,
+        race_number: raceNumber,
         //closed: 0
       })
     });

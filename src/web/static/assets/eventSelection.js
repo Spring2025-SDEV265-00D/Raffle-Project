@@ -1,8 +1,9 @@
+
 addEventListener("DOMContentLoaded", async function () {
     const eventDropdown = document.getElementById("eventDropdown");
 
     try {
-        const response = await fetch("http://localhost:5000/events");
+        const response = await fetch(`${API_BASE_URL}/events`);
         if (!response.ok) {
             throw new Error("Failed to fetch events.");
         }

@@ -1,3 +1,5 @@
+
+
 // 4/18/25 - Entering a valid reference number and clicking either of the buttons will collect 
 // the ticket information for that reference number. Clicking Redeem or Refund will display the 
 // correct response to the cashier. Would maybe like this to be in a pop up window or have a way
@@ -11,7 +13,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log(referenceNum.value)
 
         try {
-            const response = await fetch(`http://localhost:5000/ticket/info?ticket_id=${referenceNum.value}`);
+            const response = await fetch( `${API_BASE_URL}/ticket/info?ticket_id=${referenceNum.value}`);
             if (response.ok) {
                 const ticketData = await response.json();
     
@@ -21,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 //TO DO: add a way to clear the message that is displayed, maybe add message to pop up window.
 
                 try {
-                    const thisResponse = await fetch("http://localhost:5000/ticket/update", {
+                    const thisResponse = await fetch( `${API_BASE_URL}/ticket/update`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -71,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log(referenceNum.value)
 
         try {
-            const response = await fetch(`http://localhost:5000/ticket/info?ticket_id=${referenceNum.value}`);
+            const response = await fetch( `${API_BASE_URL}/ticket/info?ticket_id=${referenceNum.value}`);
             if (response.ok) {
                 const ticketData = await response.json();
     
@@ -80,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 //NOTE this is for cases where the "Refund" button is clicked.
                 
                 try {
-                    const thisResponse = await fetch("http://localhost:5000/ticket/update", {
+                    const thisResponse = await fetch( `${API_BASE_URL}/ticket/update`, {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
