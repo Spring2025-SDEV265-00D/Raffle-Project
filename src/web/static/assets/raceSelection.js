@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
             raceList.innerHTML += `<li>
             <section>
                 <div class="display-6 col-md-8 text-md-start">
-                    Race - ${race.race_id}
+                    Race - ${race.race_number}
                 </div>
                 <div>
                     <select class="col-md-8" id="race-${race.race_id}">
