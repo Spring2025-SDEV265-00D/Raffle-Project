@@ -1,13 +1,17 @@
 
 
 document.addEventListener("DOMContentLoaded", async function loadRaces() {
-    const raceList = document.getElementById("raceList");
+    const raceList = document.getElementById("raceDropDown");
     const ticketContent = document.getElementById("ticketContainer");
     const ticketModal = document.getElementById("ticketModal"); 
     const closeModalBtn = document.querySelector(".close"); 
+    const errorMsg = document.getElementById("errorMessage");
     
     const selectedEventId = localStorage.getItem("eventID");
     console.log(selectedEventId);
+
+    const RaceIDs = []; 
+    const quantities = [];
 
     try {
         const response = await fetch(
@@ -18,68 +22,81 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
         }
 
         const races = await response.json();
-        raceList.innerHTML = '';
+        raceDropDown.innerHTML = '';
 
         races.forEach((race) => {
             console.log(race.race_id);
-            raceList.innerHTML += `<li>
-            <section>
-                <div class="display-6 col-md-8 text-md-start">
-                    Race - ${race.race_number}
-                </div>
-                <div>
-                    <select class="col-md-8" id="race-${race.race_id}">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
-                </div>
-            </section>
-        </li>`
-        
+            raceDropDown.innerHTML += `<option value="${race.race_number}">${race.race_number}</option>`
         });
 
-        raceList.innerHTML += `<input
+        raceAdd.innerHTML += `<input
         type="button"
         class="btn btn-secondary btn-lg"
-        value="Create"
-        id="CreateBtn"
+        value="Add"
+        id="addBtn"
         />`;
 
-        const createBtn = document.getElementById("CreateBtn");
-        createBtn.addEventListener("click", async function (event) {
-           // event.preventDefault(); 
+        const addBtn = document.getElementById("addBtn");
 
-            const RaceIDs = []; 
-            const quantities = [];
-            let ticketNum = 0; 
-            const ticketLim = 10;
-
-            races.forEach((race) => {
-                const selectElement = document.getElementById(`race-${race.race_id}`);
+        //This code allows tickets to be added to order
+        addBtn.addEventListener("click", async function () {
+            const selectRace = document.getElementById(`raceDropDown`);
+            const selectQuantity = document.getElementById(`quantityDropDown`);
                 
-                if (selectElement) {
-                    const selectedValue = selectElement.value; 
+                if (selectRace && selectQuantity) {
+                    const selectedRace = selectRace.value; 
+                    const selectedQuan = selectQuantity.value;
 
-                    const quantity = parseInt(selectedValue, 10);
+                    console.log(selectedRace)
+                    console.log(selectedQuan)
+
+                    const quantity = parseInt(selectedQuan);
+                    const raceNum = parseInt(selectedRace);
 
                     if (!isNaN(quantity) && quantity > 0) {
                         quantities.push(quantity);
-                        RaceIDs.push(race.race_id);
+                        RaceIDs.push(raceNum);
+
+                        const tableBody = document.querySelector(".table tbody");
+                        const newRow = tableBody.insertRow();
+
+                        const raceCell = newRow.insertCell(0);
+                        const quantityCell = newRow.insertCell(1);
+
+                        raceCell.textContent = raceNum;
+                        quantityCell.textContent = quantity;
+                    }
+                    else {
+                        errorMsg.innerHTML = "Must have valid quantity value.";
+                        console.error(`Must have valid quantity value.`);
                     }
 
                 } else {
-                    console.error(`Select element for raceId ${race.race_id} not found.`);
+                    errorMsg.innerHTML = "Could not find race.";
+                    console.error(`Select element for raceId not found.`);
                 }
-            });
+                console.log(quantities)
+                console.log(RaceIDs)
+        })
+
+        const resetBtn = document.getElementById("resetBtn");
+
+        //This code resets table element and lists of stored values
+        resetBtn.addEventListener("click", async function () {
+            quantities.splice(0, quantities.length);
+            RaceIDs.splice(0, RaceIDs.length);
+
+            document.querySelector(".table tbody").innerHTML = "";
+            errorMsg.innerHTML = "";
+        })
+
+        const createBtn = document.getElementById("confirmBtn");
+
+        //This code confirms purchase with a limit of 10 tickets 
+        createBtn.addEventListener("click", async function () {
+           // event.preventDefault(); 
+            let ticketNum = 0; 
+            const ticketLim = 10;
 
             quantities.forEach(quantity => {
               ticketNum += quantity; 
@@ -89,6 +106,7 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 
             if (ticketNum > ticketLim) {
                 console.log("Ticket limit exceeded!");
+                errorMsg.innerHTML = `Ticket limit of ${ticketLim} was exceeded!`;
                 quantities.splice(0, quantities.length);
                 RaceIDs.splice(0, RaceIDs.length);
             }
@@ -128,9 +146,11 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
                   
 
               } catch (error) {
+                  errorMsg.innerHTML = "Failed to post ticket purchase. Make sure horses are assigned to each race.";
                   console.error("Error posting ticket purchase: ", error);
               }
           } else {
+              errorMsg.innerHTML = "No valid selections have been made.";
               console.log("No valid selections made.");
           }
       });
