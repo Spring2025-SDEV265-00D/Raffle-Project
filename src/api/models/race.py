@@ -1,8 +1,10 @@
 from enum import Enum
-from utils.util import Util
-from models.base_model import BaseModel
-from utils.db_instance import db
-from utils.app_error import *
+
+from .base_model import BaseModel
+
+from utils import Util
+from utils import NotFoundError, ModelStateError
+from utils import db
 
 
 class Race(BaseModel):  # need error handling
@@ -32,7 +34,7 @@ class Race(BaseModel):  # need error handling
 
         if not event_races_row_data:
             raise NotFoundError(
-                f"No races in record for event -> {event_id}", context=AppError.get_error_context(data=event_id))
+                f"No races in record for event -> {event_id}", context=NotFoundError.get_error_context(data=event_id))
 
         return Util.handle_row_data(event_races_row_data, Race)
 
@@ -40,7 +42,7 @@ class Race(BaseModel):  # need error handling
 
     @staticmethod
     def get_ticket_count(race_id: dict):
-        from models.ticket import Ticket
+        from .ticket import Ticket
 
         # race_id = {'race_id': N}
         if Race.id_exists_in_db(race_id):
@@ -49,7 +51,7 @@ class Race(BaseModel):  # need error handling
 
     @staticmethod
     def get_horses(race_data: dict, filter=None):
-        from models.horse import Horse
+        from .horse import Horse
         if Race.id_exists_in_db(race_data):
             return Horse.get_horses_for_race(race_data, filter)  #
 # ---------------------------------------------------------------------------------
@@ -61,7 +63,7 @@ class Race(BaseModel):  # need error handling
 
         if Race.is_closed(race_id):
             raise ModelStateError(
-                f"Race -> {race_id} has already been closed.", context=AppError.get_error_context(race_id=race_id))
+                f"Race -> {race_id} has already been closed.", context=ModelStateError.get_error_context(race_id=race_id))
 
         set_data = {Race.Status.LABEL.value: Race.Status.CLOSED.value}
         Race.update_one(set_data, race_id)
@@ -71,7 +73,7 @@ class Race(BaseModel):  # need error handling
 
     @staticmethod
     def add_horses(data: dict):
-        from models.horse import Horse
+        from .horse import Horse
         race_id, _ = Util.split_dict(data)
         if Race.id_exists_in_db(race_id):
             return Horse.build(data)

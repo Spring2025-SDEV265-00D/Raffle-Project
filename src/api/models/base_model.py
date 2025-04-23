@@ -1,7 +1,8 @@
-from utils.db_instance import db
-from utils.util import Util
-from models.base_meta import BaseMeta
-from utils.app_error import *
+from .base_meta import BaseMeta
+
+from utils import Util
+from utils import NotFoundError, DatabaseError
+from utils import db
 
 
 class BaseModel(metaclass=BaseMeta):
@@ -15,7 +16,7 @@ class BaseModel(metaclass=BaseMeta):
         exists = db.query.has_record(cls, data)
         if not exists:
             raise NotFoundError(
-                f"No record for {cls.__name__} -> {data}", context=AppError.get_error_context(data=data))
+                f"No record for {cls.__name__} -> {data}", context=NotFoundError.get_error_context(data=data))
         return exists
 
     @classmethod
@@ -32,7 +33,7 @@ class BaseModel(metaclass=BaseMeta):
 
         if not db_row:  # need t his?
             raise NotFoundError(f"Empty records for {cls.__name__} -> {model_id}",
-                                context=AppError.get_error_context(received_data=model_id))
+                                context=NotFoundError.get_error_context(received_data=model_id))
 
         return Util.handle_row_data(db_row, cls, filter)
 
@@ -42,7 +43,7 @@ class BaseModel(metaclass=BaseMeta):
 
         if not db_table_rows:
             raise NotFoundError(
-                f"Error fetching all {cls.__name__.lower()}s", context=AppError.get_error_context())
+                f"Error fetching all {cls.__name__.lower()}s", context=NotFoundError.get_error_context())
 
         return Util.handle_row_data(db_table_rows, cls, filter)
 
@@ -54,7 +55,10 @@ class BaseModel(metaclass=BaseMeta):
 
         if not db.query.update_row_by_id(cls, set_clause_data, where_clause_data):
             raise DatabaseError(
-                f"{cls.__name__} update failed -> {where_clause_data}")
+                f"{cls.__name__} update failed -> {where_clause_data}",
+                context=DatabaseError.get_error_context(cls=cls,
+                                                        set_clause_data=set_clause_data,
+                                                        where_clause_data=where_clause_data))
 
     @classmethod
     def get_count_by_att(cls, query_data: dict):

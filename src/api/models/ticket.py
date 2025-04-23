@@ -1,9 +1,10 @@
-from utils.util import Util
-
-from utils.db_instance import db
-from models.base_model import BaseModel
-from utils.app_error import *
 from enum import Enum
+
+from .base_model import BaseModel
+
+from utils import Util
+from utils import db
+from utils import ModelStateError
 
 
 class Ticket(BaseModel):
@@ -53,7 +54,7 @@ class Ticket(BaseModel):
    # @classmethod
     @staticmethod
     def handle_order(order_data: list[dict]) -> list[dict]:
-        from models.race import Race
+        from .race import Race
 
         # listOfDicts = [{"race_id": "1", "qtty": 1}, {"race_id": "2", "qtty": 2}]
 
@@ -152,10 +153,10 @@ class Ticket(BaseModel):
 
     @staticmethod
     def _is_redeemable(horse_id: dict) -> bool:
-        from models.horse import Horse
+        from .horse import Horse
         return Horse.is_winner(horse_id)
 
     @staticmethod
     def _is_refundable(horse_id: dict) -> bool:
-        from models.horse import Horse
+        from .horse import Horse
         return Horse.is_scratched(horse_id)

@@ -1,7 +1,8 @@
-from models.base_model import BaseModel
-from utils.util import Util
-from utils.db_instance import db
-from utils.app_error import *
+from .base_model import BaseModel
+
+from utils import Util
+from utils import DatabaseError
+from utils import db
 
 
 class Event(BaseModel):
@@ -10,7 +11,7 @@ class Event(BaseModel):
 
     @staticmethod
     def get_races(data: dict, filter="all"):
-        from models.race import Race
+        from .race import Race
         if Event.id_exists_in_db(data):
             return Race.get_races_for_event(data, filter)
 # ---------------------------------------------------------------------------------
@@ -35,11 +36,11 @@ class Event(BaseModel):
 
         except IntegrityError as e:
             raise DatabaseError(f"Unable to add event. Event names must be unique.",
-                                context=AppError.get_error_context(data=data))
+                                context=DatabaseError.get_error_context(data=data))
 
         if not new_event_id:
             raise DatabaseError(f"Unable to add new event.",
-                                context=AppError.get_error_context(data=data))
+                                context=DatabaseError.get_error_context(data=data))
 
         # new_event_id = Util.id_int_to_dict(new_event_id)
         new_event_data = Event.get_data(new_event_id)
@@ -50,7 +51,7 @@ class Event(BaseModel):
 
     @staticmethod
     def add_race(data: dict):
-        from models.race import Race
+        from .race import Race
 
         event_id, _ = Util.split_dict(data)
         if Event.id_exists_in_db(event_id):
