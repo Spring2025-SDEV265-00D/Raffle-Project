@@ -3,7 +3,10 @@ addEventListener("DOMContentLoaded", async function () {
     const eventDropdown = document.getElementById("eventDropdown");
 
     try {
-        const response = await fetch(`${API_BASE_URL}/events`);
+        const response = await fetch(`${API_BASE_URL}/fetch/events`,{
+            method: "GET",
+            credentials: "include"
+            });
         if (!response.ok) {
             throw new Error("Failed to fetch events.");
         }

@@ -1,16 +1,12 @@
 from flask import Flask, render_template
 from dotenv import load_dotenv
+
 import os
 
 
 load_dotenv()
 API_BASE_URL = os.getenv("API_BASE_URL")
 app = Flask(__name__)
-
-
-@app.route("/test")
-def test():
-    return render_template("testing.html", api_base_url=API_BASE_URL)
 
 
 # *-----------------ADMIN-----------------*
@@ -36,7 +32,6 @@ def manage_race():
 
 # *-----------------SELLERS-----------------*
 
-# @app.route("/ticket/info", methods=["GET"])
 @app.route("/ticket/info")
 def update_ticket():
     # !adjust it here
@@ -58,16 +53,6 @@ def event_selection():
 @app.route("/ticket/purchase")
 def ticket_purchase():
     return render_template("ticketPurchase.html", api_base_url=API_BASE_URL)
-
-
-@app.route("/ticket/status")
-def ticket_status():
-    return render_template("ticketStatus.html", api_base_url=API_BASE_URL)
-
-
-@app.route("/ticket/cancel")
-def ticket_cancel():
-    return render_template("ticketCancel.html", api_base_url=API_BASE_URL)
 
 
 if __name__ == "__main__":

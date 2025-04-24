@@ -5,4 +5,4 @@ from .horse import Horse
 from .race import Race
 from .ticket import Ticket
 from .user import User
-__all__ = ['BaseMeta', 'BaseModel', 'Event', 'Horse', 'Race', 'Ticket']
+__all__ = ['BaseMeta', 'BaseModel', 'Event', 'Horse', 'Race', 'Ticket', 'User']

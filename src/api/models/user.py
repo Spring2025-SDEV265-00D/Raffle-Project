@@ -8,6 +8,23 @@ from .base_model import BaseModel
 # from utils import NotFoundError, ModelStateError
 from utils import db
 
+from enum import Enum
+
+
+class Role(BaseModel):
+
+    class Tier(Enum):
+
+        ADMIN = (1, "Admin")
+        SELLER = (2, "Seller")
+        CASHIER = (3, "Cashier")
+
+        def __new__(cls, value, label):
+            obj = object.__new__(cls)
+            obj._value_ = value
+            obj.label = label
+            return obj
+
 
 class User(UserMixin, BaseModel):
 
@@ -24,11 +41,22 @@ class User(UserMixin, BaseModel):
         self.role = data['role_id']
         self.last_login_dttm = data['last_login_dttm']
 
+    def __str__(self):
+
+        return f"ID: {self.id}, USERNAME: {self.username}, ROLE: {self.get_role_str()}"
+
     def __repr__(self):
-        return f"<User id={self.id} username='{self.username}'>"
+
+        return {'id': self.id,
+                'username': self.username,
+                'role_id': self.role
+                }
 
     def get_id(self):
         return str(self.id)
+
+    def get_role_str(self):
+        return Role.Tier(self.role).label
 
     @staticmethod
     def login(data: dict) -> dict:
@@ -54,11 +82,3 @@ class User(UserMixin, BaseModel):
     def load(user_id):
         user_data = User.get_data(user_id)
         return User(user_data) if user_data else None
-
-
-class Role(BaseModel):
-    ADMIN = 1
-    SELLER = 2
-    CASHIER = 3
-
-    pass

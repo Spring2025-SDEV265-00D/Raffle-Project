@@ -1,3 +1,4 @@
+from flask import abort
 from functools import wraps  # keeps function properties instead of wrapper's
 from flask import request
 from .util import Util

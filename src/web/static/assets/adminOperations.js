@@ -16,7 +16,10 @@ async function loadEvents() {
   try {
     tableBody.innerHTML = `<tr><td colspan="6" class="text-center">Loading events...</td></tr>`;
 
-    const response = await fetch( `${API_BASE_URL}/events`);
+    const response = await fetch( `${API_BASE_URL}/fetch/events`,{
+            method: "GET",
+            credentials: "include"
+            });
     if (!response.ok) {
       throw new Error('Failed to fetch events');
     }
@@ -58,7 +61,7 @@ async function loadEvents() {
       btn.addEventListener('click', function () {
         const eventId = this.getAttribute('data-event-id');
        // window.location.href = `event-details.html?eventId=${eventId}`; 
-       window.location.href =  `${API_BASE_URL}/event/info?event_id=${eventId}`
+       window.location.href =  `${API_BASE_URL}/fetch/event/info?event_id=${eventId}` //not sure if these need credentials too
       });
     });
 

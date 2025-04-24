@@ -13,7 +13,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log(referenceNum.value)
 
         try {
-            const response = await fetch( `${API_BASE_URL}/ticket/info?ticket_id=${referenceNum.value}`);
+            const response = await fetch( `${API_BASE_URL}/fetch/ticket/info?ticket_id=${referenceNum.value}`,{
+            method: "GET",
+            credentials: "include"
+            });
             if (response.ok) {
                 const ticketData = await response.json();
     
@@ -23,8 +26,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 //TO DO: add a way to clear the message that is displayed, maybe add message to pop up window.
 
                 try {
-                    const thisResponse = await fetch( `${API_BASE_URL}/ticket/update`, {
-                        method: "POST",
+                    const thisResponse = await fetch( `${API_BASE_URL}/redeem/ticket`, {
+                        method: "POST", 
+                        credentials: "include",
                         headers: {
                             "Content-Type": "application/json"
                         },
@@ -73,7 +77,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.log(referenceNum.value)
 
         try {
-            const response = await fetch( `${API_BASE_URL}/ticket/info?ticket_id=${referenceNum.value}`);
+            const response = await fetch( `${API_BASE_URL}/fetch/ticket/info?ticket_id=${referenceNum.value}`,{
+            method: "GET",
+            credentials: "include"
+            });
             if (response.ok) {
                 const ticketData = await response.json();
     
@@ -82,8 +89,9 @@ document.addEventListener("DOMContentLoaded", async function () {
                 //NOTE this is for cases where the "Refund" button is clicked.
                 
                 try {
-                    const thisResponse = await fetch( `${API_BASE_URL}/ticket/update`, {
+                    const thisResponse = await fetch( `${API_BASE_URL}/redeem/ticket`, {
                         method: "POST",
+                        credentials: "include",
                         headers: {
                             "Content-Type": "application/json"
                         },
