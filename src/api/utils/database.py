@@ -1,8 +1,9 @@
-from utils.util import Util
-import sqlite3
 from flask import g
+import sqlite3
 from pathlib import Path
-from utils.queries import QueryHelper
+
+from .util import Util
+from .queries import QueryHelper
 
 
 BASE = Path(__file__).resolve().parent.parent.parent
@@ -42,6 +43,9 @@ class Database:
 
     def rollback(self):
         self.get_conn().rollback()
+
+    def execute(self, query: str):
+        self.get_conn().execute(query)
 
     # using this to get the query helper and get us the raw SQL
     @property

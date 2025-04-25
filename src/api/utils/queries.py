@@ -1,6 +1,7 @@
 import sqlite3
-from utils.util import Util
 from typing import Literal, TypedDict
+
+from .util import Util
 
 
 class ModelDict(TypedDict):  # testing
@@ -95,7 +96,7 @@ class QueryHelper:
 
     def get_all_from(self, cls) -> list[sqlite3.Row]:
 
-        table_name = cls.get_table_name()
+        table_name = cls.get_table_name()  # if cls is not "Role" else "Role"
         query = f"SELECT * FROM {table_name}"
         self.cursor.execute(query)
         return self.cursor.fetchall()
@@ -122,7 +123,7 @@ class QueryHelper:
     # call this Select?
     def get_many_rows_by_att(self, cls, query_data: dict) -> list[sqlite3.Row]:
 
-        # Util.p("in get many rows QUERY", query_data=query_data)
+        # Util.p("in get many rows QUERY", query_data=query_data, cls=cls)
 
         table_name = cls.get_table_name()
 
@@ -134,6 +135,7 @@ class QueryHelper:
         # Util.p("in get many rows", query=query)
         self.cursor.execute(query, args)
         # Util.p("in get many rows", data=self.cursor.fetchone())
+
         return self.cursor.fetchall()
 # ---------------------------------------------------------------------------------
 
@@ -209,8 +211,6 @@ class QueryHelper:
 # ---------------------------------------------------------------------------------
 
     def insert_many(self, cls, query_data: list[dict], clause_type="INSERT") -> list:
-
-        # Util.p("insert many", query_data=query_data)
 
         inserted_ids_list = []
 

@@ -1,9 +1,9 @@
-from enum import Enum
-from types import SimpleNamespace
-from utils.db_instance import db
-from utils.database import DATABASE_PATH
 import sqlite3
-from utils.util import Util
+from enum import Enum
+
+from utils import Util
+from utils import DATABASE_PATH
+from utils import db
 
 
 class FieldEnumMeta(Enum):

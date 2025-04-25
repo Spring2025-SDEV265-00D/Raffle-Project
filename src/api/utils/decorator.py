@@ -1,7 +1,8 @@
+from flask import abort
 from functools import wraps  # keeps function properties instead of wrapper's
 from flask import request
-from utils.util import Util
-from utils.app_error import *
+from .util import Util
+from .app_error import PayloadError
 
 
 def validate_payload_structure(expected_fields=None, expected_headers=None, expected_nested=None, expecting_payload=True):

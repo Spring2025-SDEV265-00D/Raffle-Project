@@ -1,0 +1,23 @@
+from flask import Blueprint, request, jsonify
+from flask_cors import CORS, cross_origin
+from flask_login import login_required
+
+from models import Ticket
+from utils import validate_payload_structure
+
+
+seller_bp = Blueprint("seller", __name__, url_prefix="/pos")
+
+
+@seller_bp.route("/ticket/purchase", methods=["POST"])
+@validate_payload_structure(expected_headers='order', expected_nested=['race_id', 'qtty'])
+@login_required
+@cross_origin()
+def ticket_purchase(validated_payload):
+
+    response = {'order': Ticket.batching(validated_payload['order'])}
+
+    # for ticket_unit in response["order"]:
+    # Util.p("response api->web ", ticket_printable_data=ticket_unit)  # debug
+
+    return jsonify(response), 201

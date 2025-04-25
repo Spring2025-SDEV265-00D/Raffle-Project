@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("addEventForm").addEventListener("submit", submitEvent);
 
   document.getElementById("backBtn").addEventListener("click", () => {
-    window.location.href = "adminOperations.html";
+    window.location.href = "/admin/operations";
   });
 });
 
@@ -49,6 +49,7 @@ async function submitEvent(e) {
   try {
     const response = await fetch(`${API_BASE_URL}/admin/events/create`, {
       method: 'POST',
+      credentials: "include",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(eventData)
     });

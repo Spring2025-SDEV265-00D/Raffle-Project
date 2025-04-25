@@ -1,4 +1,4 @@
-from utils.app_error import PayloadError
+from .app_error import PayloadError
 
 
 class Util:
@@ -146,7 +146,7 @@ class Util:
         other_data = {}
 
         for key, value in data.items():
-            if key.endswith("_id"):
+            if key.endswith("_id") or key == 'username':
                 id_data = {key: value}
             else:
                 other_data = {key: value}

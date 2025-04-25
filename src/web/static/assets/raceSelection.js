@@ -15,8 +15,12 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 
     try {
         const response = await fetch(
-            `${API_BASE_URL}/events/races?event_id=${selectedEventId}`
-        );
+            `${API_BASE_URL}/fetch/events/races?event_id=${selectedEventId}`,{
+            method: "GET",
+            credentials: "include"
+            });
+
+        
         if (!response.ok) {
             throw new Error("Failed to fetch races.");
         }
@@ -124,8 +128,9 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
               const postData = { order: ticketData };
 
               try {
-                  const thisResponse = await fetch(`${API_BASE_URL}/ticket/purchase`, {
+                  const thisResponse = await fetch(`${API_BASE_URL}/pos/ticket/purchase`, {
                       method: "POST",
+                      credentials: "include",
                       headers: {
                           "Content-Type": "application/json"
                       },

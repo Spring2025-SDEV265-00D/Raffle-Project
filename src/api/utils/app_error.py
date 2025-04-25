@@ -75,3 +75,25 @@ class PayloadError(AppError):
         msg = f"Payload Error: {msg}"
 
         super().__init__(msg, status_code, context)
+
+
+class AuthenticationError(AppError):
+    """Base error for authentication issues """
+
+# adjust status code for this
+# front end must handle these codes..
+    def __init__(self, msg, status_code=400, context=None):
+        msg = f"Authentication Error: {msg}"
+
+        super().__init__(msg, status_code, context)
+
+
+class AuthorizationError(AppError):
+    """Base error for authorization issues """
+
+# adjust status code for this
+# front end must handle these codes..
+    def __init__(self, msg, status_code=400, context=None):
+        msg = f"Authorization Error: {msg}"
+
+        super().__init__(msg, status_code, context)

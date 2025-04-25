@@ -1,8 +1,10 @@
 from enum import Enum
-from models.base_model import BaseModel
-from utils.util import Util
-from utils.db_instance import db
-from utils.app_error import *
+
+from .base_model import BaseModel
+
+from utils import Util
+from utils import EmptyDataError
+from utils import db
 
 
 class Horse(BaseModel):
@@ -26,7 +28,7 @@ class Horse(BaseModel):
 
         if not race_roster:
             raise EmptyDataError(
-                f"No horses in record for race -> {id_data}", context=AppError.get_error_context(id_data=id_data))
+                f"No horses in record for race -> {id_data}", context=EmptyDataError.get_error_context(id_data=id_data))
 
         # horse_ids = [horse["id"] for horse in race_roster]
 
@@ -64,13 +66,3 @@ class Horse(BaseModel):
 
         horse_data = Horse.get_data(horse_id, 'scratched')
         return horse_data['scratched'] == Horse.Status.SCRATCHED.value
-
-
-""" 
- try:
-        x = db.query.get_count(cls, query_data)
-        Util.p("x test", xTEST=x)
-        return x
-    except Exception as e:
-        Util.p("EXCEPTION in get_count_by_att", error=str(e))
-        raise """

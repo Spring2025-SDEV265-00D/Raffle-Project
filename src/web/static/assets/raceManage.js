@@ -29,7 +29,10 @@ async function loadEventDetails() {
   currentEventId = eventId;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/event/info?event_id=${currentEventId}`);
+    const response = await fetch(`${API_BASE_URL}/fetch/event/info?event_id=${currentEventId}`,{
+            method: "GET",
+            credentials: "include"
+            });
     if (!response.ok) {
       throw new Error('Failed to fetch events');
     }
@@ -67,7 +70,10 @@ async function loadRaces() {
   const racesTableBody = document.getElementById("racesTableBody");
   try {
     racesTableBody.innerHTML = `<tr><td colspan="5" class="text-center">Loading races...</td></tr>`;
-    const response = await fetch(`${API_BASE_URL}/events/races?event_id=${currentEventId}`);
+    const response = await fetch(`${API_BASE_URL}/fetch/events/races?event_id=${currentEventId}`,{
+      method: "GET",
+      credentials: "include"
+      });
     if (!response.ok) {
       throw new Error('Failed to fetch races');
     }
@@ -116,6 +122,7 @@ async function loadRaces() {
 
             const response = await fetch(`${API_BASE_URL}/admin/races/close`, {
               method: 'PATCH',
+              credentials: "include",
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ race_id: raceId })
             });
@@ -142,8 +149,9 @@ async function addRace(e) {
   //const raceNumber = document.getElementById("raceNumber").value;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/events/races`, {  //needs backend
-      method: 'POST',
+    const response = await fetch(`${API_BASE_URL}/fetch/events/races`, {  //needs backend
+      method: 'POST', 
+      credentials: "include",
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         event_id: currentEventId,
