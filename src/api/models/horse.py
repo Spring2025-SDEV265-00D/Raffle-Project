@@ -3,7 +3,7 @@ from enum import Enum
 from .base_model import BaseModel
 
 from utils import Util
-from utils import EmptyDataError
+from utils import EmptyDataError, ModelStateError
 from utils import db
 
 
@@ -53,6 +53,34 @@ class Horse(BaseModel):
         db.query.insert_many(Horse, insert_data)
 
         # ---------------------------------------------------------------------------------
+
+    @staticmethod
+    def set_winner(horse_id: dict):
+        from models import Race
+
+        error_msg = None
+
+        winner_data = {'winner': Horse.WINNER}
+
+        race_id = Horse.get_data(horse_id, 'race_id')
+        query_data = race_id | winner_data
+
+        # need closed race check
+        if not Race.is_closed(race_id):
+            error_msg = "Unable to set winner. Race is not closed"
+
+        # need to check if theres already a winner
+        elif db.query.get_count(Horse, query_data):
+            error_msg = "Unable to set winner. Race already has a registered winner."
+
+        if error_msg:
+            raise ModelStateError(error_msg,
+                                  context=ModelStateError.get_error_context(
+                                      query_data=query_data, horse_id=horse_id))
+
+        Horse.update_one(winner_data, horse_id)
+
+        return {'message': 'Winner set.'}
 
     @staticmethod
     def is_winner(horse_id: dict) -> bool:
