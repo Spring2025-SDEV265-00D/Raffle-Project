@@ -14,7 +14,12 @@ class QueryHelper:
         self.conn = connection  # passes the conn to obj
         self.cursor = self.conn.cursor()  # creates a cursor obj
 
-# ---------------------------------------------------------------------------------
+    def get_foreign_keys(self, cls) -> list[str]:
+        table_name = cls.get_table_name()
+        query = f"PRAGMA foreign_key_list({table_name})"
+
+        return self.cursor.execute(query).fetchone()
+        # ---------------------------------------------------------------------------------
 
     def has_record(self, cls, model_id: dict | str | int) -> bool:
         table_name = cls.get_table_name()

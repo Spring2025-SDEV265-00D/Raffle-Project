@@ -9,10 +9,11 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @auth_bp.route("/login", methods=["POST", "GET"])
-@validate_payload_structure(expected_fields=['username', 'password'])
-def login(validated_payload):
+# @validate_payload_structure(expected_fields=['username', 'password'])
+# def login(validated_payload):
+def login():
 
-    # validated_payload = {'username': 'admin', 'password': 'admin123'}
+    validated_payload = {'username': 'admin', 'password': 'admin123'}
     user = User.login(validated_payload)
     login_user(user)
 
@@ -30,4 +31,4 @@ def logout():
 @login_required
 def get_user_role():
 
-    return current_user.get_role_str(), 200
+    return current_user.get_role(), 200

@@ -146,10 +146,10 @@ async function loadRaces() {
 async function addRace(e) {
   e.preventDefault();
 
-  //const raceNumber = document.getElementById("raceNumber").value;
+  const raceNumber = document.getElementById("raceNumber").value;
 
   try {
-    const response = await fetch(`${API_BASE_URL}/fetch/events/races`, {  //needs backend
+    const response = await fetch(`${API_BASE_URL}/admin/races/create`, {  //needs backend
       method: 'POST', 
       credentials: "include",
       headers: { 'Content-Type': 'application/json' },
@@ -162,7 +162,7 @@ async function addRace(e) {
     if (!response.ok) {
       throw new Error('Failed to add race');
     }
-    //document.getElementById("addRaceForm").reset();
+    document.getElementById("addRaceForm").reset();
     document.getElementById("successMessage").textContent = "Race added successfully!";
     setTimeout(() => {
       document.getElementById("successMessage").textContent = "";

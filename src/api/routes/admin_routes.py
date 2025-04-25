@@ -21,10 +21,19 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 @validate_payload_structure(expected_fields=['event_name', 'location', 'start_date', 'end_date'])
 def create_event(validated_payload):
 
-    return jsonify(Event.create(validated_payload)), 200
+    return jsonify(Event.add(validated_payload)), 200
 
 
 # ? RACES
+
+@admin_bp.route("/races/create", methods=["POST"])
+@cross_origin()
+@validate_payload_structure(expected_fields=['event_id', 'race_number'])
+def create_race(validated_payload):
+    # def add_race():
+    # validated_payload = {'event_id': 1, 'race_number': 999}
+    return jsonify(Race.add(validated_payload)), 200
+
 
 @admin_bp.route("/races/close", methods=["PATCH"])
 @validate_payload_structure(expected_fields='race_id')
@@ -46,3 +55,16 @@ def set_race_winner(validated_payload):
     # validated_payload = {'horse_id': '1'}
 
     return jsonify(Horse.set_winner(validated_payload)), 200
+
+
+# ? horses
+
+
+#!this route might need front end to check for horse_num duplicates (for races too)
+@admin_bp.route("/horses/create", methods=["POST", "GET"])
+@cross_origin()
+@validate_payload_structure(expected_fields=['race_id', 'horse_number'])
+def create_horse(validated_payload):
+
+    # validated_payload = {'race_id': 1, 'horse_number': 999}
+    return jsonify(Horse.add(validated_payload)), 200

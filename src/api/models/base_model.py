@@ -1,13 +1,48 @@
 from .base_meta import BaseMeta
 
 from utils import Util
-from utils import NotFoundError, DatabaseError
+from utils import AppError, NotFoundError, DatabaseError
 from utils import db
 
 
 class BaseModel(metaclass=BaseMeta):
 
     _is_abstract = True
+
+    @classmethod
+    def add(cls, data: dict) -> dict:
+
+        cls.check_dependency(data)
+
+        new_model_id = None
+        try:
+            new_model_id = db.query.insert(cls, data)
+            db.commit()
+
+        except Exception as e:
+            raise DatabaseError(f"Unable to add {cls.__name__}: {e}",
+                                context=DatabaseError.get_error_context(data=data))
+
+        if not new_model_id:
+            raise DatabaseError(f"Unable to add {cls.__name__}",
+                                context=DatabaseError.get_error_context(data=data))
+
+        new_model_data = cls.get_data(new_model_id)
+        new_model_data = Util.handle_row_data(new_model_data, cls)
+
+        return new_model_data
+
+    @classmethod
+    def check_dependency(cls, data: dict) -> bool:
+        from models import MODEL_REGISTRY
+        dependency = db.query.get_foreign_keys(cls)
+        if dependency is None:
+            return True
+        f_key = dependency['from']
+
+        parent_class = MODEL_REGISTRY.get(f_key)
+
+        return parent_class.id_exists_in_db(data[f_key])
 
     @classmethod
     def id_exists_in_db(cls, data: dict) -> bool:
@@ -59,13 +94,3 @@ class BaseModel(metaclass=BaseMeta):
                 context=DatabaseError.get_error_context(cls=cls,
                                                         set_clause_data=set_clause_data,
                                                         where_clause_data=where_clause_data))
-
-    @classmethod
-    def get_count_by_att(cls, query_data: dict):
-
-        Util.p("basemodel.get count", cls=cls, data=query_data)
-
-        count = db.query.get_count(cls, query_data)
-        Util.p("x test", xTEST=count)
-
-        return count

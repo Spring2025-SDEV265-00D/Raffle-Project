@@ -43,7 +43,7 @@ class User(UserMixin, BaseModel):
 
     def __str__(self):
 
-        return f"ID: {self.id}, USERNAME: {self.username}, ROLE: {self.get_role_str()}"
+        return f"ID: {self.id}, USERNAME: {self.username}, ROLE: {self.get_role()}"
 
     def __repr__(self):
 
@@ -55,8 +55,8 @@ class User(UserMixin, BaseModel):
     def get_id(self):
         return str(self.id)
 
-    def get_role_str(self):
-        return Role.Tier(self.role).label
+    def get_role(self):
+        return {'role': Role.Tier(self.role).label}
 
     @staticmethod
     def login(data: dict) -> dict:

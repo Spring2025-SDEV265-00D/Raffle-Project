@@ -6,3 +6,13 @@ from .race import Race
 from .ticket import Ticket
 from .user import User
 __all__ = ['BaseMeta', 'BaseModel', 'Event', 'Horse', 'Race', 'Ticket', 'User']
+
+
+# used to check if a parent exists before adding a child (ensuring you can't add a race to an invalid event_id)
+MODEL_REGISTRY = {
+    'event_id': Event,
+    'race_id': Race,
+    'horse_id': Horse,
+    'ticket_id': Ticket
+
+}
