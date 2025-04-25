@@ -3,8 +3,10 @@ from .admin_routes import admin_bp
 from .seller_routes import seller_bp
 from .cashier_routes import cashier_bp
 from .fetcher_routes import fetcher_bp
+from .report_routes import report_bp
 blueprints = [auth_bp,
               admin_bp,
               seller_bp,
               cashier_bp,
-              fetcher_bp]
+              fetcher_bp,
+              report_bp]
