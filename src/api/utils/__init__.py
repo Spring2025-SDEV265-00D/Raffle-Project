@@ -1,4 +1,5 @@
 from .util import Util
+from .report import Report
 # from .database import Database
 from .database import DATABASE_PATH
 # from .queries import QueryHelper

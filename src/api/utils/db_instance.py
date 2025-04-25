@@ -24,6 +24,7 @@ def initialize_db():
         seed_admin_data()
 
         if DEV_MODE:
+            seed_roles_test_data()
             seed_test_data()
 
         db.commit()
@@ -80,6 +81,36 @@ def seed_admin_data():
 
 
 def seed_test_data():
+
+    simulated_race = [
+
+        """
+        insert into event (event_name, location, start_date, end_date)
+        values ('Lilly Fair 2022','Lafayette', '2022-01-05', '2022-01-08');
+        """,
+        """
+        insert into race (event_id, race_number)
+        values (1,1), (1,2);
+        """,
+        """
+        insert into  horse (race_id, horse_number)
+        values (1,1), (1,2), (1,3), (2,1), (2,2),(2,3);
+        """,
+        """
+        insert into ticket (horse_id) 
+        values 
+        (1),(2),(3),(1),(2),(3),(1),(2),
+        (4), (5), (6), (4), (5), (6), (4), (5), (6), (4), (5), (6), (4), (5);
+
+        """
+    ]
+    for query in simulated_race:
+        db.execute(query)
+
+    # ?-------------------------------------------------------------------------------
+
+
+def seed_roles_test_data():
     from models import User
 
     # create cashier and seller test users
