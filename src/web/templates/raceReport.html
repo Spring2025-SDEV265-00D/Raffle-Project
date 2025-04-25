@@ -7,7 +7,7 @@
     <script>
         async function fetchRaceData() {
             const raceId = document.getElementById('raceId').value;
-            const response = await fetch(`/api/snaffle-raffle/report/${raceId}`);
+            const response = await fetch(`/api/raffle/report/${raceId}`);
 
             if (response.ok) {
                 const data = await response.json();
