@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raffle Report</title>
+    <script>
+        async function fetchRaceData() {
+            const raceId = document.getElementById('raceId').value;
+            const response = await fetch(`/api/snaffle-raffle/report/${raceId}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                displayData(data);
+            } else {
+                const error = await response.json();
+                document.getElementById('result').innerText = error.error;
+            }
+        }
+
+        function displayData(data) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<h2>Race ID: ${data.raceId}</h2>`;
+            data.horses.forEach(horse => {
+                resultDiv.innerHTML += `<p>${horse.name}: ${horse.ticketsSold} tickets sold</p>`;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Raffle Report</h1>
+    <input type="text" id="raceId" placeholder="Enter Race ID" />
+    <button onclick="fetchRaceData()">Get Report</button>
+    <div id="result"></div>
+</body>
+</html>
