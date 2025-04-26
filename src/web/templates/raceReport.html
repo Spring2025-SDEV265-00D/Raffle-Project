@@ -35,9 +35,10 @@
 <table>
     <thead>
         <tr>
-            <th>Horse Name</th>
-            <th>Jockey</th>
+            <th>Horse Number</th>
+            <th>Scratched</th>
             <th>Tickets Sold</th>
+            <th>Winner</th>
         </tr>
     </thead>
     <tbody id="report-body">
@@ -69,9 +70,10 @@
         reportData.forEach(horse => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${horse.name || 'N/A'}</td>
-                <td>${horse.jockey || 'N/A'}</td>
+                <td>${horse.horse_number || 'N/A'}</td>
+                <td>${horse.scratched ? 'Yes' : 'No'}</td>
                 <td>${horse.tickets_sold || 0}</td>
+                <td>${horse.winner ? 'Yes' : 'No'}</td>
             `;
             reportBody.appendChild(row);
         });
