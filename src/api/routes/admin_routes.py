@@ -35,6 +35,8 @@ def create_race(validated_payload):
     return jsonify(Race.add(validated_payload)), 200
 
 
+#!merge 2 routes below?
+
 @admin_bp.route("/races/close", methods=["PATCH"])
 @validate_payload_structure(expected_fields='race_id')
 @login_required
@@ -49,12 +51,11 @@ def close_race(validated_payload):
 @admin_bp.route("/race/update", methods=["POST", "GET"])
 @login_required
 @cross_origin()
-@validate_payload_structure(expected_fields='horse_id')
-def set_race_winner(validated_payload):
+@validate_payload_structure(expected_fields=['horse_id', 'request'])
+def update_race(validated_payload):
+   # validated_payload = {'horse_id': '1', 'request': 'scratched'}
 
-    # validated_payload = {'horse_id': '1'}
-
-    return jsonify(Horse.set_winner(validated_payload)), 200
+    return jsonify(Race.update(validated_payload)), 200
 
 
 # ? horses

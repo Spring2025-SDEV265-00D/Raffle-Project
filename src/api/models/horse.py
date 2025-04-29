@@ -15,9 +15,9 @@ class Horse(BaseModel):
         SCRATCHED = 1
         LABEL = 'scratched'
 
-    ############################# Tried and Tested #############################
+        ############################# Tried and Tested #############################
 
-    # returns a list of horse_ids of horses in a race by race_id
+        # returns a list of horse_ids of horses in a race by race_id
 
     @staticmethod
     def get_horses_for_race(id_data: dict, filter: list[str] | str = None) -> list:
@@ -33,54 +33,43 @@ class Horse(BaseModel):
         # horse_ids = [horse["id"] for horse in race_roster]
 
         return Util.handle_row_data(race_roster, Horse, filter)  # horse_ids
-    ############################# Tried and Tested #############################
-# ---------------------------------------------------------------------------------
-
-    @staticmethod
-    def build(data: dict) -> None:
-        race_id, qtty = Util.split_dict(data)
-        race_horses_count = Horse.get_count_by_att(race_id)
-        new_horse_number = race_horses_count
-
-        insert_data = []
-        for _ in range(qtty['qtty']):
-            new_horse_number += 1
-
-            insert_data.append(race_id | {'horse_number': new_horse_number})
-
-        # Util.p("horse.build", insert_data=insert_data)
-        # new_horses_ids = db.query.insert_many(Horse, insert_data)
-        db.query.insert_many(Horse, insert_data)
 
         # ---------------------------------------------------------------------------------
 
     @staticmethod
-    def set_winner(horse_id: dict):
-        from models import Race
-
-        error_msg = None
+    def set_winner(horse_id: dict) -> dict:
 
         winner_data = {'winner': Horse.WINNER}
 
         race_id = Horse.get_data(horse_id, 'race_id')
         query_data = race_id | winner_data
 
-        # need closed race check
-        if not Race.is_closed(race_id):
-            error_msg = "Unable to set winner. Race is not closed"
-
         # need to check if theres already a winner
-        elif db.query.get_count(Horse, query_data):
-            error_msg = "Unable to set winner. Race already has a registered winner."
-
-        if error_msg:
-            raise ModelStateError(error_msg,
+        if db.query.get_count(Horse, query_data):
+            raise ModelStateError("Unable to set winner. Race already has a registered winner.",
                                   context=ModelStateError.get_error_context(
                                       query_data=query_data, horse_id=horse_id))
 
         Horse.update_one(winner_data, horse_id)
 
         return {'message': 'Winner set.'}
+
+    @staticmethod
+    def set_scratched(horse_id: dict) -> dict:
+        if Horse.is_scratched(horse_id):
+            raise ModelStateError('Horse has already been scratched.',
+                                  context=ModelStateError.get_error_context(horse_id=horse_id))
+
+        if Horse.is_winner(horse_id):
+            raise ModelStateError('This horse is marked as a winner, cannot scratch the race winner.',
+                                  context=ModelStateError.get_error_context(horse_id=horse_id))
+
+        scratched_data = {
+            Horse.Status.LABEL.value: Horse.Status.SCRATCHED.value}
+
+        Horse.update_one(scratched_data, horse_id)
+
+        return {'message': 'Horse scratched.'}
 
     @staticmethod
     def is_winner(horse_id: dict) -> bool:

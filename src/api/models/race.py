@@ -16,7 +16,36 @@ class Race(BaseModel):  # need error handling
         CLOSED = 1
         LABEL = 'closed'
 
-############################# Tried and Tested #############################
+    @staticmethod
+    def update(request_data: dict) -> dict:
+        response = None
+        horse_id, request_type = Util.split_dict(request_data)
+        request_type = request_type['request']
+
+        from .horse import Horse
+        race_id = Horse.get_data(horse_id, 'race_id')
+
+        # request_type = {'winner'}
+        if request_type == 'winner':
+            if not Race.is_closed(race_id):
+                raise ModelStateError("Unable to set winner. Race is not closed",
+                                      context=ModelStateError.get_error_context(
+                                          request_data=request_data))
+
+            response = Horse.set_winner(horse_id)
+
+            # request_type = {'scratched'}
+        elif request_type == 'scratched':
+            response = Horse.set_scratched(horse_id)
+
+        else:
+            raise ModelStateError(
+                f"Invalid request type -> {request_type}.", context=ModelStateError.get_error_context(request_data=request_data))
+            # not sure if scratching can be done after race is closed
+            # (disqualified horse?) leaving it possible for now
+
+        return response
+
     @staticmethod
     def is_closed(race_id: dict):
 
