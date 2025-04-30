@@ -9,7 +9,8 @@ from .app_error import (AppError, NotFoundError, EmptyDataError,
 
 
 from .db_instance import db
-from .decorator import validate_payload_structure
+from .decorator import (validate_payload_structure,
+                        require_role, restrict_by_role)
 
 __all__ = ['Util', 'AppError', 'NotFoundError', 'EmptyDataError',
            'DatabaseError', 'ModelStateError', 'PayloadError', 'Database', 'QueryHelper']

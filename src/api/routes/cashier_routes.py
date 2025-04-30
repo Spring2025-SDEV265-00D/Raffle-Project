@@ -4,15 +4,15 @@ from flask_login import login_required
 
 
 from models import Ticket
-from utils import validate_payload_structure
+from utils import validate_payload_structure, restrict_by_role
 
 
 cashier_bp = Blueprint("cashier", __name__, url_prefix="/redeem")
+cashier_bp.before_request(restrict_by_role("Cashier"))
 
 
 @cashier_bp.route("/ticket", methods=["POST"])
 @validate_payload_structure(expected_fields=['ticket_id', 'request'])
-@login_required
 @cross_origin()
 def ticket_update(validated_payload):
 

@@ -6,10 +6,11 @@ from flask_login import login_required
 
 from models import Event
 from models import Race
-from utils import validate_payload_structure
+from utils import validate_payload_structure, require_role
 
 fetcher_bp = Blueprint("fetcher", __name__, url_prefix="/fetch")
 
+# need to replace @login_required with @require_role decorator where needed
 # *EVENTS
 
 
@@ -64,9 +65,10 @@ def fetch_races_for_event(validated_payload):
 # !this is admin functionality
 @fetcher_bp.route("/events/races/horses", methods=["GET"])
 @validate_payload_structure(expected_fields='race_id')
-@login_required
+@require_role('Admin')
 def fetch_horses_for_race(validated_payload):
 
+    # validated_payload = {'race_id': 1}
     # can take a filter to fetch only specific data
     filter = None
     return jsonify(Race.get_horses(validated_payload, filter))

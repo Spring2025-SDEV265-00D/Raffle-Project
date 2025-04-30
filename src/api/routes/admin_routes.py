@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_login import login_required
 from flask_cors import CORS, cross_origin
 
-from utils import validate_payload_structure
+from utils import validate_payload_structure, require_role, restrict_by_role
 from models import Event
 from models import Race
 from models import Horse
@@ -10,13 +10,13 @@ from models import Horse
 
 # set blueprint
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+admin_bp.before_request(restrict_by_role("Admin"))
 
 
 # ? events
 
 
 @admin_bp.route("/events/create", methods=["POST"])
-@login_required
 @cross_origin()
 @validate_payload_structure(expected_fields=['event_name', 'location', 'start_date', 'end_date'])
 def create_event(validated_payload):
@@ -39,7 +39,6 @@ def create_race(validated_payload):
 
 @admin_bp.route("/races/close", methods=["PATCH"])
 @validate_payload_structure(expected_fields='race_id')
-@login_required
 @cross_origin()
 def close_race(validated_payload):
 
@@ -49,11 +48,10 @@ def close_race(validated_payload):
 
 
 @admin_bp.route("/race/update", methods=["POST", "GET"])
-@login_required
 @cross_origin()
 @validate_payload_structure(expected_fields=['horse_id', 'request'])
 def update_race(validated_payload):
-    # validated_payload = {'horse_id': '1', 'request': 'winner'}
+   # validated_payload = {'horse_id': '1', 'request': 'winner'}
     # validated_payload = {'horse_id': '1', 'request': 'scratched'}
 
     return jsonify(Race.update(validated_payload)), 200
