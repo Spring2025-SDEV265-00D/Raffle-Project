@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 from dotenv import load_dotenv
 import os
-from auth import check_auth
+from auth import check_auth, check_role
 
 load_dotenv()
 API_BASE_URL = os.getenv("API_BASE_URL")
@@ -32,6 +32,7 @@ def close_race():
 
 @app.route("/admin/operations")
 @check_auth
+@check_role('Admin')
 def admin_dashboard():
     return render_template("adminOperations.html")
 
@@ -54,7 +55,6 @@ def manage_race():
 @app.route("/ticket/info")
 @check_auth
 def update_ticket():
-    # !adjust it here
     return render_template("cashier.html")
 
 
