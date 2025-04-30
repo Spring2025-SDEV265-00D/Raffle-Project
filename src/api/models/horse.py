@@ -39,27 +39,26 @@ class Horse(BaseModel):
     @staticmethod
     def set_winner(horse_id: dict) -> dict:
 
-        error_msg = None
-
-        if Horse.is_scratched(horse_id):
-            error_msg = "This horse is marked as scratched, cannot mark it as winner"
-
         winner_data = {'winner': Horse.WINNER}
-
         race_id = Horse.get_data(horse_id, 'race_id')
         query_data = race_id | winner_data
 
-        # need to check if theres already a winner
-        if Horse.is_winner(horse_id):
-            error_msg = "This horse is already marked as a winner."
+        # get context to avoid repeating
+        context = ModelStateError.get_error_context(
+            query_data=query_data, horse_id=horse_id)
 
+        if Horse.is_scratched(horse_id):
+            raise ModelStateError(
+                "This horse is marked as scratched, cannot mark it as winner", context=context)
+
+        elif Horse.is_winner(horse_id):
+            raise ModelStateError(
+                "This horse is already marked as a winner.", context=context)
+
+      # need to check if theres already a winner
         elif db.query.get_count(Horse, query_data):
-            error_msg = "Unable to set winner. Race already has a registered winner."
-
-        if error_msg:
-            raise ModelStateError(error_msg,
-                                  context=ModelStateError.get_error_context(
-                                      query_data=query_data, horse_id=horse_id))
+            raise ModelStateError(
+                "Unable to set winner. Race already has a registered winner.", context=context)
 
         Horse.update_one(winner_data, horse_id)
 
