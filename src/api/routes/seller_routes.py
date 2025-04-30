@@ -3,15 +3,15 @@ from flask_cors import CORS, cross_origin
 from flask_login import login_required
 
 from models import Ticket
-from utils import validate_payload_structure
+from utils import validate_payload_structure, restrict_by_role
 
 
 seller_bp = Blueprint("seller", __name__, url_prefix="/pos")
+seller_bp.before_request(restrict_by_role("Seller"))
 
 
 @seller_bp.route("/ticket/purchase", methods=["POST"])
 @validate_payload_structure(expected_headers='order', expected_nested=['race_id', 'qtty'])
-@login_required
 @cross_origin()
 def ticket_purchase(validated_payload):
 

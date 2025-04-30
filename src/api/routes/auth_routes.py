@@ -14,6 +14,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 def login():
 
     validated_payload = {'username': 'admin', 'password': 'admin123'}
+    # validated_payload = {'username': 'seller', 'password': 'seller123'}
     user = User.login(validated_payload)
     login_user(user)
 

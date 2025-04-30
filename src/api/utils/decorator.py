@@ -60,3 +60,59 @@ def validate_payload_structure(expected_fields=None, expected_headers=None, expe
             return func(*args, **kwargs)
         return wrapper
     return decorator
+
+# restricts a whole blueprint to a specific role
+# used in blueprint setup
+# triggered by before_request
+
+
+def restrict_by_role(allowed_roles: list[str] | str):
+    from flask_login import current_user
+
+    if isinstance(allowed_roles, str):
+        allowed_roles = [allowed_roles]
+
+    def role_check():
+        response = None
+
+        # check if session has a logged user
+        if current_user.is_anonymous:
+            response = {'error': "Unauthorized. Please log in"}, 401
+
+        current_role = current_user.get_role().get('role')
+
+        has_clearance = current_role == "Admin" or current_role in allowed_roles
+        if not has_clearance:
+            response = {'error': f"Access forbidden: Insufficient role."}, 403
+
+        return response
+    return role_check
+
+# restricts access per route decorator
+
+
+def require_role(allowed_roles: str | list[str]):
+    from flask_login import current_user
+
+    if isinstance(allowed_roles, str):
+        allowed_roles = [allowed_roles]
+
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            response = None
+
+            # check if session has a logged user
+            if current_user.is_anonymous:
+                response = {'error': "Unauthorized. Please log in"}, 401
+
+            # if so check their clearance
+            current_role = current_user.get_role().get('role')
+            has_clearance = current_role == "Admin" or current_role in allowed_roles
+            if not has_clearance:
+                response = {
+                    'error': f"Access forbidden: Insufficient role."}, 403
+
+            return response if response else func(*args, **kwargs)
+        return wrapper
+    return decorator
