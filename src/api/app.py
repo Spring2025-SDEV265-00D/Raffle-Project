@@ -1,6 +1,7 @@
 import os
 import secrets
 
+from datetime import timedelta
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_login import LoginManager
@@ -20,6 +21,7 @@ for each in blueprints:
     app.register_blueprint(each)
 
 CORS(app, origins=[os.getenv("FRONT_END_ORIGIN")])
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
 # Generate a secure secret key. We do not need to set this manually.
 app.secret_key = secrets.token_hex(32)
