@@ -1,16 +1,18 @@
-
+const { API_BASE_URL } = window.ENV;
 
 document.addEventListener("DOMContentLoaded", () => {
   const today = new Date();
   const nextWeek = new Date();
   nextWeek.setDate(today.getDate() + 7);
 
-  const formatDate = date => date.toISOString().split('T')[0];
+  const formatDate = (date) => date.toISOString().split("T")[0];
 
   document.getElementById("startDate").value = formatDate(today);
   document.getElementById("endDate").value = formatDate(nextWeek);
 
-  document.getElementById("addEventForm").addEventListener("submit", submitEvent);
+  document
+    .getElementById("addEventForm")
+    .addEventListener("submit", submitEvent);
 
   document.getElementById("backBtn").addEventListener("click", () => {
     window.location.href = "/admin/operations";
@@ -43,18 +45,18 @@ async function submitEvent(e) {
     event_name: eventName,
     location: location,
     start_date: startDate,
-    end_date: endDate
+    end_date: endDate,
   };
 
   try {
     const response = await fetch(`${API_BASE_URL}/admin/events/create`, {
-      method: 'POST',
+      method: "POST",
       credentials: "include",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(eventData)
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(eventData),
     });
     if (!response.ok) {
-      throw new Error('Failed to create event');
+      throw new Error("Failed to create event");
     }
     const result = await response.json();
 
@@ -65,7 +67,8 @@ async function submitEvent(e) {
       window.location.href = "/admin/operations";
     }, 2000);
   } catch (error) {
-    console.error('Error creating event:', error);
-    errorMessage.textContent = "Failed to create event. Please try again later.";
+    console.error("Error creating event:", error);
+    errorMessage.textContent =
+      "Failed to create event. Please try again later.";
   }
 }

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Race Report</h1>
+
+<label for="race-id">Enter Race ID:</label>
+<input type="text" id="race-id" placeholder="Race ID">
+<button id="fetch-report">Get Report</button>
+
+<table>
+    <thead>
+        <tr>
+            <th>Horse Number</th>
+            <th>Scratched</th>
+            <th>Tickets Sold</th>
+            <th>Winner</th>
+        </tr>
+    </thead>
+    <tbody id="report-body">
+        <!-- Report data will be inserted here -->
+    </tbody>
+</table>
+
+<script>
+    // Function to fetch report data from the API
+    async function fetchReportData(raceId) {
+        try {
+            const response = await fetch(`/api/report/by_race?race_id=${raceId}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const reportData = await response.json();
+            return reportData;
+        } catch (error) {
+            console.error('Error fetching report data:', error);
+            return [];
+        }
+    }
+
+    // Function to populate the report table
+    function populateReportTable(reportData) {
+        const reportBody = document.getElementById('report-body');
+        reportBody.innerHTML = ''; // Clear existing data
+
+        reportData.forEach(horse => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${horse.horse_number || 'N/A'}</td>
+                <td>${horse.scratched ? 'Yes' : 'No'}</td>
+                <td>${horse.tickets_sold || 0}</td>
+                <td>${horse.winner ? 'Yes' : 'No'}</td>
+            `;
+            reportBody.appendChild(row);
+        });
+    }
+
+    // Event listener for the button click
+    document.getElementById('fetch-report').addEventListener('click', async () => {
+        const raceId = document.getElementById('race-id').value;
+        if (raceId) {
+            const reportData = await fetchReportData(raceId);
+            populateReportTable(reportData);
+        } else {
+            alert('Please enter a valid Race ID.');
+        }
+    });
+</script>
+
+</body>
+</html>

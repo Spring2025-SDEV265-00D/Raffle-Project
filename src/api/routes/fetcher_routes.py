@@ -3,7 +3,6 @@ from flask import Blueprint, request, jsonify
 from flask_cors import CORS, cross_origin
 from flask_login import login_required
 
-
 from models import Event
 from models import Race
 from utils import validate_payload_structure
@@ -29,7 +28,7 @@ def fetch_event(validated_payload):
 @cross_origin()
 def fetch_all_events(validated_payload=None):
 
-   # Util.p("in routes", validated_payload=validated_payload)  # debug
+    # Util.p("in routes", validated_payload=validated_payload)  # debug
 
     filter = None  # set filter with expected attributes
     return jsonify(Event.get_all(filter))
@@ -57,6 +56,7 @@ def fetch_races_for_event(validated_payload):
 
     # (validated_payload))
     return jsonify(Event.get_races(validated_payload))
+
 
 # *HORSES
 
