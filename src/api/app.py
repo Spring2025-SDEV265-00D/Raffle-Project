@@ -18,8 +18,7 @@ app = Flask(__name__)
 for each in blueprints:
     app.register_blueprint(each)
 
-
-CORS(app,  origins=[os.getenv("FRONT_END_ORIGIN")])
+CORS(app, origins=[os.getenv("FRONT_END_ORIGIN")])
 app.secret_key = os.getenv("SECRET_KEY")
 
 
@@ -35,7 +34,6 @@ def apply_cors_headers(response):
 
 with app.app_context():
     initialize_db()
-
 
 # set up login manager
 login_manager = LoginManager()
@@ -71,7 +69,6 @@ def handle_app_error(e):
 
     Util.pretty_print(response)
     return jsonify(response['error']), status
-
     """ #!let it crash for now so we can see whats going on
 # for unexpected errors?
 @app.errorhandler(Exception)
