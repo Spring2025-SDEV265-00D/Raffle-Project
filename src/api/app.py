@@ -1,4 +1,5 @@
 import os
+import secrets
 
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -19,16 +20,14 @@ for each in blueprints:
     app.register_blueprint(each)
 
 CORS(app, origins=[os.getenv("FRONT_END_ORIGIN")])
-app.secret_key = os.getenv("SECRET_KEY")
+
+# Generate a secure secret key. We do not need to set this manually.
+app.secret_key = secrets.token_hex(32)
 
 
 @app.after_request
 def apply_cors_headers(response):
     response.headers.setdefault("Access-Control-Allow-Credentials", "true")
-
-    # from flask_login import current_user
-    # print(str(current_user))
-
     return response
 
 
