@@ -53,7 +53,8 @@ def close_race(validated_payload):
 @cross_origin()
 @validate_payload_structure(expected_fields=['horse_id', 'request'])
 def update_race(validated_payload):
-   # validated_payload = {'horse_id': '1', 'request': 'scratched'}
+    # validated_payload = {'horse_id': '1', 'request': 'winner'}
+    # validated_payload = {'horse_id': '1', 'request': 'scratched'}
 
     return jsonify(Race.update(validated_payload)), 200
 
