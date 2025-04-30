@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import timedelta
 
@@ -9,37 +9,25 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @auth_bp.route("/login", methods=["POST"])
-@validate_payload_structure(expected_fields=['username', 'password'])
-def login(validated_payload):
+def login():
     try:
-        # Get credentials from form data
         username = request.form.get('username')
         password = request.form.get('password')
 
         # Attempt to authenticate the user
         user = User.login({'username': username, 'password': password})
         if not user:
-            return jsonify({
-                "status": "error",
-                "message": "Invalid credentials. Please try again."
-            }), 401
+            # We can use the "flashed message" in the front end via Jinja templating
+            flash("Invalid credentials")
+            return redirect(url_for('login'))
 
-        # Set session timeout to 30 minutes
         login_user(user, duration=timedelta(minutes=30))
-
-        return jsonify({
-            "status": "success",
-            "message": f"Login successful! Hello {user.username}"
-        }), 200
+        return redirect(
+            url_for('dashboard'))  # or wherever you want to go after login
 
     except Exception as e:
-        # Log the error here if you have logging set up
-        return jsonify({
-            "status":
-            "error",
-            "message":
-            "An error occurred during login. Please try again."
-        }), 500
+        flash("An error occurred during login")
+        return redirect(url_for('login'))
 
 
 @auth_bp.route("/logout", methods=["POST"])
