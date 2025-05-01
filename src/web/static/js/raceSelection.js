@@ -31,7 +31,11 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 
     races.forEach((race) => {
       console.log(race.race_id);
-      raceDropDown.innerHTML += `<option value="${race.race_number}">${race.race_number}</option>`;
+      console.log(race.closed);
+
+      if (race.closed == 0) {
+        raceDropDown.innerHTML += `<option value="${race.race_number}">${race.race_number}</option>`;
+      }
     });
 
     raceAdd.innerHTML += `<input
