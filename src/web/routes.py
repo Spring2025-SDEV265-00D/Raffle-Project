@@ -26,6 +26,7 @@ def login():
 # *-----------------ADMIN-----------------*
 @app.route("/admin/races/close")
 @check_auth
+@check_role('Admin')
 def close_race():
     return render_template("raceStopBetting.html")
 
@@ -39,12 +40,14 @@ def admin_dashboard():
 
 @app.route("/admin/events/create")
 @check_auth
+@check_role('Admin')
 def add_event():
     return render_template("eventAdd.html")
 
 
 @app.route("/admin/event/races/manage")
 @check_auth
+@check_role('Admin')
 def manage_race():
     return render_template("raceManage.html")
 
@@ -54,12 +57,14 @@ def manage_race():
 
 @app.route("/ticket/info")
 @check_auth
+@check_role('Cashier')
 def update_ticket():
     return render_template("cashier.html")
 
 
 @app.route("/event/selection")
 @check_auth
+@check_role('Seller')
 def event_selection():
     return render_template("eventSelection.html")
 
@@ -67,6 +72,7 @@ def event_selection():
 # lets choose event and race for ticket generation
 @app.route("/ticket/purchase")
 @check_auth
+@check_role('Seller')
 def ticket_purchase():
     return render_template("ticketPurchase.html")
 
