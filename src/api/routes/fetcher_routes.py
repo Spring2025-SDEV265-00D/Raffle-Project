@@ -15,7 +15,7 @@ fetcher_bp = Blueprint("fetcher", __name__, url_prefix="/fetch")
 
 @fetcher_bp.route("/event/info", methods=["GET"])
 @validate_payload_structure(expected_fields='event_id')
-@login_required
+@require_role('Seller')
 @cross_origin()
 def fetch_event(validated_payload):
 
@@ -25,7 +25,7 @@ def fetch_event(validated_payload):
 
 @fetcher_bp.route("/events", methods=["GET"])
 @validate_payload_structure(expecting_payload=False)
-@login_required
+@require_role('Seller')
 @cross_origin()
 def fetch_all_events(validated_payload=None):
 
@@ -40,7 +40,7 @@ def fetch_all_events(validated_payload=None):
 
 @fetcher_bp.route("/events/races", methods=["GET"])
 @validate_payload_structure(expected_fields='event_id')
-@login_required
+@require_role('Seller')
 @cross_origin()
 def fetch_races_for_event(validated_payload):
 
@@ -79,7 +79,7 @@ def fetch_horses_for_race(validated_payload):
 
 @fetcher_bp.route("/ticket/info", methods=["GET"])
 @validate_payload_structure(expected_fields='ticket_id')
-@login_required
+@require_role('Seller')
 @cross_origin()
 def fetch_ticket(validated_payload):
 
