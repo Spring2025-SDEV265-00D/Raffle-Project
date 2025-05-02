@@ -184,9 +184,9 @@ async function generateTicket(data) {
     `${data.order[0].event_name}` +
     "</h2>";
   html +=
-    '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_1.png" alt=":(">'; // alt isnt descriptive because it would
+    '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_final.png" alt=":(">'; // alt isnt descriptive because it would
   html +=
-    '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_1.png" alt="):">'; // mess up the format of everything
+    '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_final.png" alt="):">'; // mess up the format of everything
   html += "<div>";
   html +=
     "<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>";
@@ -211,9 +211,9 @@ async function generateTicket(data) {
     `${data.order[0].event_name}` +
     "</h2>";
   html +=
-    '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_1.png" alt=":(">';
+    '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_final.png" alt=":(">';
   html +=
-    '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_1.png" alt="):">';
+    '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_final.png" alt="):">';
   html += "<div>";
   html +=
     "<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>";
