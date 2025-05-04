@@ -26,6 +26,20 @@
     {% block head %}{% endblock %}
   </head>
   <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="/static/images/horse_head_final.png" alt="Logo" width="30" height="30" class="d-inline-block align-text-top">
+          Raffle System
+        </a>
+        {% if session.get('session') %}
+          <div class="d-flex align-items-center">
+            <span class="text-light me-3">Hello, {{ user_info.role.role if user_info and user_info.status == 'success' else 'User' }}</span>
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+          </div>
+        {% endif %}
+      </div>
+    </nav>
     {% block content %}{% endblock %}
   </body>
 </html>

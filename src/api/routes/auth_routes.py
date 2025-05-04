@@ -8,26 +8,26 @@ from utils import validate_payload_structure
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
+
+
+
+
 @auth_bp.route("/login", methods=["POST"])
 def login():
-    try:
-        username = request.form.get('username')
-        password = request.form.get('password')
 
-        # Attempt to authenticate the user
-        user = User.login({'username': username, 'password': password})
-        if not user:
-            # We can use the "flashed message" in the front end via Jinja templating
-            flash("Invalid credentials")
-            return redirect(url_for('login'))
+    username = request.form.get('username')
+    password = request.form.get('password')
 
-        login_user(user, duration=timedelta(minutes=30))
-        return redirect(
-            url_for('dashboard'))  # or wherever you want to go after login
+    user = User.login({'username': username, 'password': password})
+    login_user(user)
 
-    except Exception as e:
-        flash("An error occurred during login")
-        return redirect(url_for('login'))
+    return jsonify({
+        "status": "success",
+        "message": f"Login successful! Hello {user.username}",
+        "role": user.get_role(),
+        "username": user.username
+    }), 200
+
 
 
 @auth_bp.route("/logout", methods=["POST"])
@@ -53,10 +53,11 @@ def get_user_role():
     try:
         return jsonify({
             "status": "success",
-            "role": current_user.get_role()
+            "role": current_user.get_role(),
+            "username": current_user.username
         }), 200
     except Exception as e:
-        # Log the error here if you have logging set up
+
         return jsonify({
             "status": "error",
             "message": "Error retrieving user role."
