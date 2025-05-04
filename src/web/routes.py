@@ -1,6 +1,7 @@
 from flask import Flask, render_template
 from dotenv import load_dotenv
 import os
+import requests
 # from auth import check_auth, check_role
 
 load_dotenv()
@@ -20,7 +21,7 @@ def inject_globals():
 # *-----------------LOGIN-----------------*
 @app.route("/login")
 def login():
-    return "Login page not implemented yet. Should POST username/password to API_BASE_URL/auth/login"
+    return render_template("login.html")
 
 
 # *-----------------ADMIN-----------------*
@@ -35,7 +36,15 @@ def close_race():
 # @check_auth
 # @check_role('Admin')
 def admin_dashboard():
-    return render_template("adminOperations.html")
+    try:
+        response = requests.get(f"{API_BASE_URL}/fetch/events")
+        response.raise_for_status()
+        events = response.json()
+    except Exception as e:
+        events = []
+        print(f"Error fetching events: {e}")
+
+    return render_template("adminOperations.html", events=events)
 
 
 @app.route("/admin/events/create")

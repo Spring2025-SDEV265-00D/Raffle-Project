@@ -33,9 +33,6 @@ class Util:
         # check if headers are present in payload
         Util.valid_payload(payload, expected=expected_headers)
 
-       # Util.p("unziped", expected_headers=expected_headers,
-       #        expected_nested=expected_nested)
-
         # if so, loop over only the ones that actually have nested data
         headers_with_nested = list(zip(expected_headers, expected_nested))
 
@@ -43,18 +40,16 @@ class Util:
 
         for header, nested in headers_with_nested:
 
-            # Util.p("in loop", header=header, nested=nested)
-
             try:
-                Util.valid_payload(payload=payload[header][0],
-                                   expected=nested)
+                Util.valid_payload(payload=payload[header][0], expected=nested)
 
             except PayloadError as e:
                 raise PayloadError(f"{e.message} Nested in header: {header}",
-                                   context=PayloadError.get_error_context(payload=payload,
-                                                                          expected_headers=expected_headers,
-                                                                          expect_nested=expected_nested,
-                                                                          original_context=e.context))
+                                   context=PayloadError.get_error_context(
+                                       payload=payload,
+                                       expected_headers=expected_headers,
+                                       expect_nested=expected_nested,
+                                       original_context=e.context))
 
         return payload
 
@@ -101,45 +96,6 @@ class Util:
                                                        expected=expected))
         return payload
 
- #       if not all(key in payload for key in expected):
-  #          raise PayloadError(f"Mismatch. Expected: {expected}")
-   #     return payload
-
-        # ---------------------------------------------------------------------------------
-
-    @staticmethod
-    def pretty_print(data):
-        import json
-
-        print("\n\n")
-        print(f"************************************************")
-        print(json.dumps(data, indent=4))
-
-        print(f"************************************************")
-        print("\n\n")
-# ---------------------------------------------------------------------------------
-
-    @staticmethod
-    def f(userMsg="no msg for you"):
-        print("\n\n")
-        print(f"************************{userMsg}************************\n")
-        print("\n\n")
-# ---------------------------------------------------------------------------------
-
-    @staticmethod
-    def p(userMsg="no msg for you", **kwargs):
-        print("\n\n")
-
-        print(f"************************{userMsg}************************\n")
-        for var_name, var_value in kwargs.items():
-            print(f"{var_name} = {var_value}")
-            print("\n")
-
-        # print(message)
-        print(f"***********END OF--->***{userMsg}************************\n")
-        print("\n\n")
-# ---------------------------------------------------------------------------------
-
     @staticmethod
     def split_dict(data: dict) -> tuple[dict, dict]:
         id_data = {}
@@ -153,21 +109,17 @@ class Util:
 
         return id_data, other_data
 
-        # dict1, dict2 = [{key:value} for key, value in data.items()]
-
-        # ---------------------------------------------------------------------------------
-
     @staticmethod
     def id_int_to_dict(id_value: int | str, cls=None) -> dict:
-        return {'id': id_value} if not cls else {f"{cls.__name__.lower()}_id": id_value}
-# ---------------------------------------------------------------------------------
+        return {
+            'id': id_value
+        } if not cls else {
+            f"{cls.__name__.lower()}_id": id_value
+        }
 
     @staticmethod
-    def round_robin_pick(
-        horses: list,
-        tickets_sold: int,
-        new_tickets: int
-    ) -> list[dict]:
+    def round_robin_pick(horses: list, tickets_sold: int,
+                         new_tickets: int) -> list[dict]:
 
         next_horses = []
         roster_size = len(horses)
@@ -177,16 +129,19 @@ class Util:
             next_horses.append(horses[index])
 
         return next_horses
+
+
 # ---------------------------------------------------------------------------------
 
     @staticmethod
-    def handle_row_data(data: list[dict] | dict, model_class=None, fields=None):
+    def handle_row_data(data: list[dict] | dict,
+                        model_class=None,
+                        fields=None):
 
         if isinstance(data, list):
             return Util._handle_many(data, model_class, fields)
 
         return Util._handle_single(data, model_class, fields)
-# ---------------------------------------------------------------------------------
 
     @staticmethod
     def _filter_by_field(dictionary, fields=None):
@@ -204,7 +159,6 @@ class Util:
                 filtered_data[colName] = dictionary[colName]
 
         return filtered_data
-# ---------------------------------------------------------------------------------
 
     @staticmethod
     def _handle_single(row_data, model_class, fields=None):
@@ -215,21 +169,22 @@ class Util:
         row_data = Util.normalize_id(row_data, model_class)
 
         return row_data
-# ---------------------------------------------------------------------------------
 
     @staticmethod
     def _handle_many(rows_data, model_class, fields=None):
 
         rows_data = [
-            Util._handle_single(row, model_class, fields) for row in rows_data]
+            Util._handle_single(row, model_class, fields) for row in rows_data
+        ]
         return rows_data
-# ---------------------------------------------------------------------------------
 
     # revised to handle either case model_id -> id  or id ->model_id
     from typing import Literal
 
     @staticmethod
-    def normalize_id(data: list[dict] | dict, model_class=None, norm_type: Literal["strip", "add"] = "add"):
+    def normalize_id(data: list[dict] | dict,
+                     model_class=None,
+                     norm_type: Literal["strip", "add"] = "add"):
 
         if isinstance(data, str | int):
             return Util.id_int_to_dict(data)
@@ -260,9 +215,3 @@ class Util:
             formatted.append(formatted_pair)
 
         return formatted[0] if only_one else formatted
-# ---------------------------------------------------------------------------------
-
-    @staticmethod  # debugging
-    def s():
-        import inspect
-        return inspect.currentframe().f_back.f_code.co_name

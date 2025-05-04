@@ -45,7 +45,7 @@ class Ticket(BaseModel):
             # this function also checks if race_id exists in fact, and throws error if not
             if Race.is_closed(race_id_data):
                 raise ModelStateError(
-                    f"Race -> {race_id_data} is closed. Cannot sell tickets.")
+                    f"Race {race_id_data} is closed. Cannot sell tickets.")
 
             horses_in_race = Race.get_horses(race_id_data, 'id')
             ticket_count = Race.get_ticket_count(race_id_data)
@@ -68,7 +68,7 @@ class Ticket(BaseModel):
 
         if ticket_status in (Ticket.Status.REFUND, Ticket.Status.REDEEM):
             raise ModelStateError(
-                f"Ticket -> {ticket_id} was already {ticket_status.name.lower()}.",
+                f"Ticket {ticket_id} was already {ticket_status.name.lower()}.",
                 context=AppError.get_error_context(ticket_id=ticket_id))
 
         set_data = {LABEL: Ticket.Status.REFUND.value}
@@ -76,54 +76,49 @@ class Ticket(BaseModel):
         Ticket.update_one(set_data, ticket_id)
         return {
             "message":
-            f"Ticket -> {ticket_id} has been marked as {Ticket.Status.REFUND.name.lower()}."
+            f"Ticket {ticket_id} has been marked as {Ticket.Status.REFUND.name.lower()}."
         }
 
     @staticmethod
     def update_standing(request_data: dict) -> dict:
-        LABEL = Ticket.Status.LABEL.value
-        ticket_id, request_type = Util.split_dict(request_data)
+        ticket_id = request_data['ticket_id']
+        request_type = request_data['request'].upper()
 
-        ticket_data = Ticket.get_data(ticket_id)
-        ticket_status = Ticket.Status(ticket_data['status'])
+        # Check for bad request type
+        valid_requests = (Ticket.Status.REDEEM.name, Ticket.Status.REFUND.name)
+        if request_type not in valid_requests:
+            return {"message": f"Invalid request type: {request_type}."}
 
-        id: str = 'horse_id'
-        horse_id = {id: ticket_data[id]}
+        # Fetch ticket details and current status
+        ticket_details = Ticket.get_data(ticket_id)
+        current_status = Ticket.Status(ticket_details['status'])
 
-        request_type = request_type['request'].upper()
+        # Check if ticket is already processed
+        if current_status in (Ticket.Status.REFUND, Ticket.Status.REDEEM):
+            return {
+                "message": f"Ticket: {ticket_id} has already been processed."
+            }
 
-        if ticket_status in (Ticket.Status.REFUND, Ticket.Status.REDEEM):
-            raise ModelStateError(
-                f"Ticket -> {ticket_id} has already been {ticket_status.name.lower()}ed.",
-                context=ModelStateError.get_error_context(
-                    request_data=request_data))
+        # Prepare for status update
+        horse_id = ticket_details['horse_id']
+        status_label = Ticket.Status.LABEL.value
 
-        if request_type not in (Ticket.Status.REDEEM.name,
-                                Ticket.Status.REFUND.name):
-            raise ModelStateError(f"Invalid request type -> {request_type}.",
-                                  context=ModelStateError.get_error_context(
-                                      request_data=request_data))
-
-        set_data = {}
+        # Determine if the ticket can be updated
         if request_type == Ticket.Status.REDEEM.name:
-            if Ticket._is_redeemable(horse_id):
-                set_data = {LABEL: Ticket.Status.REDEEM.value}
+            if not Ticket._is_redeemable({'horse_id': horse_id}):
+                return {"message": f"Ticket: {ticket_id} is not redeemable."}
+            new_status = Ticket.Status.REDEEM.value
 
         elif request_type == Ticket.Status.REFUND.name:
-            if Ticket._is_refundable(horse_id):
-                set_data = {LABEL: Ticket.Status.REFUND.value}
+            if not Ticket._is_refundable({'horse_id': horse_id}):
+                return {"message": f"Ticket: {ticket_id} is not refundable."}
+            new_status = Ticket.Status.REFUND.value
 
-        if not set_data:
-            raise ModelStateError(
-                f"Invalid operation -> Ticket {ticket_id} is not {request_type.lower()}able.",
-                context=ModelStateError.get_error_context(
-                    request_data=request_data))
-
-        Ticket.update_one(set_data, ticket_id)
+        # Update the ticket status
+        Ticket.update_one({status_label: new_status}, ticket_id)
 
         return {
-            "message":
-            f"Ticket -> {ticket_id} has been {request_type.lower()}ed"
+            "message": f"Ticket: {ticket_id} has been {request_type.lower()}ed"
         }
 
     @staticmethod

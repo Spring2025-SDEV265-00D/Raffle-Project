@@ -1,30 +1,55 @@
-{% extends "base.html" %} {% block head %}
-<title>Operations Manager - Select Event</title>
-<script type="module" src="/static/js/adminOperations.js" defer></script>
-{% endblock %} {% block content %}
+{% extends "base.html" %}
+{% block head %}
+<title>Select Event</title>
+{% endblock %}
+{% block content %}
 
-<div class="container mt-4">
-  <h1>Operations Manager - Select Event</h1>
-
-  <div id="errorMessage" class="text-danger mb-3"></div>
-
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Ongoing Events</h2>
-    <button id="addEventBtn" class="btn btn-success">Add Event</button>
+{% set card_content %}
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-background-card border border-border rounded">
+      <thead>
+        <tr class="bg-background-card">
+          <th class="py-2 px-4 border-b">Event ID</th>
+          <th class="py-2 px-4 border-b">Event Name</th>
+          <th class="py-2 px-4 border-b">Location</th>
+          <th class="py-2 px-4 border-b">Start Date</th>
+          <th class="py-2 px-4 border-b">End Date</th>
+          <th class="py-2 px-4 border-b">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in events %}
+        <tr>
+          <td>{{ event.event_id }}</td>
+          <td>{{ event.event_name }}</td>
+          <td>{{ event.location }}</td>
+          <td>{{ event.start_date }}</td>
+          <td>{{ event.end_date }}</td>
+          <td class="flex gap-2">
+            {% set text = "Manage Races" %}
+            {% set href = "/admin/event/races/manage?eventId=" ~ event.event_id %}
+            {% include "components/button.html" %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="text-center py-4">No ongoing events.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div id="errorMessage" class="text-red-600 mb-3"></div>
+  <div class="flex justify-center">
+  {% set type = "button" %}
+  {% set text = "Add Event" %}
+  {% set extra_classes = "mb-4 w-60" %}
+  {% include "components/button.html" %}
   </div>
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Event ID</th>
-        <th>Event Name</th>
-        <th>Location</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="eventsTableBody"></tbody>
-  </table>
-</div>
+{% endset %}
+
+{% set title = "Select Event" %}
+{% set content = card_content %}
+{% include "components/card.html" %}
 {% endblock %}

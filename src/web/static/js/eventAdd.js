@@ -1,23 +1,15 @@
 const { API_BASE_URL } = window.ENV;
 
-document.addEventListener("DOMContentLoaded", () => {
-  const today = new Date();
-  const nextWeek = new Date();
-  nextWeek.setDate(today.getDate() + 7);
+const today = new Date();
+const nextWeek = new Date();
+nextWeek.setDate(today.getDate() + 7);
 
-  const formatDate = (date) => date.toISOString().split("T")[0];
+const formatDate = (date) => date.toISOString().split("T")[0];
 
-  document.getElementById("startDate").value = formatDate(today);
-  document.getElementById("endDate").value = formatDate(nextWeek);
+document.getElementById("startDate").value = formatDate(today);
+document.getElementById("endDate").value = formatDate(nextWeek);
 
-  document
-    .getElementById("addEventForm")
-    .addEventListener("submit", submitEvent);
-
-  document.getElementById("backBtn").addEventListener("click", () => {
-    window.location.href = "/admin/operations";
-  });
-});
+document.getElementById("addEventForm").addEventListener("submit", submitEvent);
 
 async function submitEvent(e) {
   e.preventDefault();
@@ -55,20 +47,19 @@ async function submitEvent(e) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(eventData),
     });
+
     if (!response.ok) {
       throw new Error("Failed to create event");
     }
+
     const result = await response.json();
+
+    // MJ: Why aren't we using or checking result?
 
     successMessage.textContent = `Event "${eventName}" created successfully!`;
     document.getElementById("addEventForm").reset();
-
-    setTimeout(() => {
-      window.location.href = "/admin/operations";
-    }, 2000);
   } catch (error) {
     console.error("Error creating event:", error);
-    errorMessage.textContent =
-      "Failed to create event. Please try again later.";
+    errorMessage.textContent = "Failed to create event.";
   }
 }

@@ -20,7 +20,14 @@ app = Flask(__name__)
 for each in blueprints:
     app.register_blueprint(each)
 
-CORS(app, origins=[os.getenv("FRONT_END_ORIGIN")])
+# CORS(app)
+origins = os.getenv("FRONT_END_ORIGINS")
+if origins:
+    origins = [o.strip() for o in origins.split(",")]
+else:
+    origins = "*"
+
+CORS(app, origins=origins)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
 
 # Generate a secure secret key. We do not need to set this manually.
@@ -62,13 +69,9 @@ def close_db(e=None):
 
 
 @app.errorhandler(AppError)
-def handle_app_error(e):
-    from utils.util import Util
-
-    response, status = AppError.format(e)
-
-    Util.pretty_print(response)
-    return jsonify(response['error']), status
+def handle_app_error(error):
+    response, status = error.format(error)
+    return {"error": response['error']}, status
 
 
 if __name__ == "__main__":

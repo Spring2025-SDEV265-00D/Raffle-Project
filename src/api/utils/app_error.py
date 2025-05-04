@@ -30,7 +30,8 @@ class AppError(Exception):
 
 
 class NotFoundError(AppError):
-    def __init__(self, msg, status_code=500, context=None):
+
+    def __init__(self, msg, status_code=404, context=None):
 
         msg = f"Not found: {msg}"
 
@@ -58,8 +59,8 @@ class DatabaseError(AppError):
 class ModelStateError(AppError):
     """Base error for request already fulfiled"""
 
-# adjust status code for this
-# front end must handle these codes..
+    # adjust status code for this
+    # front end must handle these codes..
     def __init__(self, msg, status_code=400, context=None):
         msg = f"Model State Error: {msg}"
 
@@ -69,8 +70,8 @@ class ModelStateError(AppError):
 class PayloadError(AppError):
     """Base error for mismatch in request payload """
 
-# adjust status code for this
-# front end must handle these codes..
+    # adjust status code for this
+    # front end must handle these codes..
     def __init__(self, msg, status_code=400, context=None):
         msg = f"Payload Error: {msg}"
 
@@ -80,8 +81,8 @@ class PayloadError(AppError):
 class AuthenticationError(AppError):
     """Base error for authentication issues """
 
-# adjust status code for this
-# front end must handle these codes..
+    # adjust status code for this
+    # front end must handle these codes..
     def __init__(self, msg, status_code=400, context=None):
         msg = f"Authentication Error: {msg}"
 
@@ -91,8 +92,8 @@ class AuthenticationError(AppError):
 class AuthorizationError(AppError):
     """Base error for authorization issues """
 
-# adjust status code for this
-# front end must handle these codes..
+    # adjust status code for this
+    # front end must handle these codes..
     def __init__(self, msg, status_code=400, context=None):
         msg = f"Authorization Error: {msg}"
 

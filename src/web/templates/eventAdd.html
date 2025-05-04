@@ -1,46 +1,69 @@
 {% extends "base.html" %} {% block head %}
-<title>Operations Manager - Add Event</title>
-<script type="module" src="/static/js/eventAdd.js" defer></script>
+<title>Add Event</title>
+<script type="module" src="/static/js/eventAdd.js"></script>
 {% endblock %} {% block content %}
-<div class="container mt-4">
-  <h1>Operations Manager - Add New Event</h1>
+  {% set card_content %}
+    <div id="errorMessage" class="text-red-600 mb-3"></div>
+    <div id="successMessage" class="text-green-600 mb-3"></div>
+    <form id="addEventForm" class="space-y-4">
+      <div>
+        {% set for = "eventName" %}
+        {% set text = "Event Name" %}
+        {% set required = true %}
+        {% include "components/label.html" %}
 
-  <div id="errorMessage" class="text-danger mb-3"></div>
-  <div id="successMessage" class="text-success mb-3"></div>
+        {% set id = "eventName" %}
+        {% set placeholder = "Event Name" %}
+        {% set required = true %}
+        {% include "components/input.html" %}
+      </div>
+      <div>
+        {% set for = "location" %}
+        {% set text = "Location" %}
+        {% include "components/label.html" %}
 
-  <div class="card">
-    <div class="card-body">
-      <form id="addEventForm">
-        <div class="form-group">
-          <label for="eventName">Event Name:</label>
-          <input type="text" class="form-control" id="eventName" required />
+        {% set id = "location" %}
+        {% set placeholder = "Location" %}
+        {% set required = true %}
+        {% include "components/input.html" %}
+      </div>
+      <div class="flex gap-4">
+        <div class="flex-1">
+          {% set for = "startDate" %}
+          {% set text = "Start Date" %}
+          {% include "components/label.html" %}
+
+          {% set type = "date" %}
+          {% set id = "startDate" %}
+          {% set placeholder = "Start Date" %}
+          {% set required = true %}
+          {% include "components/input.html" %}
         </div>
+        <div class="flex-1">
+          {% set for = "endDate" %}
+          {% set text = "End Date" %}
+          {% include "components/label.html" %}
 
-        <div class="form-group">
-          <label for="location">Location:</label>
-          <input type="text" class="form-control" id="location" required />
+          {% set type = "date" %}
+          {% set id = "endDate" %}
+          {% set placeholder = "End Date" %}
+          {% set required = true %}
+          {% include "components/input.html" %}
         </div>
+      </div>
+      <div class="flex flex-col gap-4">
+        <!-- Is this what we want? -->
+        {% set type = "submit" %}
+        {% set text = "Save Event" %}
+        {% include "components/button.html" %}
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="startDate">Start Date:</label>
-            <input type="date" class="form-control" id="startDate" required />
-          </div>
-
-          <div class="form-group col-md-6">
-            <label for="endDate">End Date:</label>
-            <input type="date" class="form-control" id="endDate" required />
-          </div>
-        </div>
-
-        <div class="mt-4">
-          <button type="submit" class="btn btn-primary">Save Event</button>
-          <button type="button" id="backBtn" class="btn btn-secondary ml-2">
-            Back to Events
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+        {% set href = "/admin/operations" %}
+        {% set text = "Back to Events" %}
+        {% include "components/button.html" %}
+      </div>
+    </form>
+    {% endset %}
+    {% set title = "Add Event" %}
+    {% set content = card_content %}
+    {% include "components/card.html" %}
 {% endblock %}

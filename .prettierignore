@@ -1,0 +1,2 @@
+# Jinja looks horrible when formatted by prettier, so we're ignoring it
+src/web/templates/

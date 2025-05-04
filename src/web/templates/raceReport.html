@@ -1,44 +1,43 @@
 {% extends "base.html" %} {% block head %}
 <title>Race Report</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  th,
-  td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  th {
-    background-color: #f2f2f2;
-  }
-</style>
-<script type="module" src="/static/js/raceReport.js" defer></script>
+<script type="module" src="/static/js/raceReport.js"></script>
 {% endblock %} {% block content %}
-<h1>Race Report</h1>
-
-<label for="race-id">Enter Race ID:</label>
-<input type="text" id="race-id" placeholder="Race ID" />
-<button id="fetch-report">Get Report</button>
-
-<table>
-  <thead>
-    <tr>
-      <th>Horse Number</th>
-      <th>Scratched</th>
-      <th>Tickets Sold</th>
-      <th>Winner</th>
-    </tr>
-  </thead>
-  <tbody id="report-body">
-    <!-- Report data will be inserted here -->
-  </tbody>
-</table>
+<div class="flex flex-col items-center justify-center min-h-screen w-full">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">
+      Race Report
+    </h1>
+    <form class="flex flex-col sm:flex-row items-center gap-4 mb-6">
+      <label for="race-id" class="text-gray-700 font-semibold"
+        >Enter Race ID:</label
+      >
+      <input
+        type="text"
+        id="race-id"
+        placeholder="Race ID"
+        class="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
+      />
+      <button
+        id="fetch-report"
+        type="button"
+        class="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors duration-150"
+      >
+        Get Report
+      </button>
+    </form>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border border-gray-200 rounded">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-2 px-4 border-b">Horse Number</th>
+            <th class="py-2 px-4 border-b">Scratched</th>
+            <th class="py-2 px-4 border-b">Tickets Sold</th>
+            <th class="py-2 px-4 border-b">Winner</th>
+          </tr>
+        </thead>
+        <tbody id="report-body"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 {% endblock %}

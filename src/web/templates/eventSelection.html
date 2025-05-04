@@ -1,33 +1,22 @@
-{% extends "base.html" %} {% block head %}
-<title>Event Selection</title>
-<script type="module" src="/static/js/eventSelection.js" defer></script>
-{% endblock %} {% block content %}
-<div class="p-5 fillPage"></div>
-<section id="header">
-  <div class="container-lg">
-    <div class="row justify-content-center align-items-center">
-      <div class="col-md-3 text-center text-md-start">
-        <h1>
-          <div class="display-3">Select Event</div>
-        </h1>
-      </div>
-    </div>
-  </div>
-</section>
+{% extends "base.html" %}
 
-<div class="bg-white p-4 secondPage">
-  <div class="container-lg">
-    <div class="row justify-content-center align-items-center">
-      <div class="bg-white p-4 secondPage">
-        <select class="col-md-8" id="eventDropdown"></select>
-        <input
-          type="button"
-          class="btn btn-secondary"
-          value="Select"
-          id="eventBtn"
-        />
-      </div>
-    </div>
-  </div>
-</div>
+{% block head %}
+  <title>Select Event</title>
+  <script type="module" src="/static/js/eventSelection.js"></script>
+{% endblock %}
+
+{% block content %}
+  {% set card_content %}
+    {% set id = "eventDropdown" %}
+    {% include "components/select.html" %}
+
+    {% set type = "button" %}
+    {% set text = "Select" %}
+    {% set id = "eventBtn" %}
+    {% include "components/button.html" %}
+  {% endset %}
+
+  {% set title = "Select Event" %}
+  {% set content = card_content %}
+  {% include "components/card.html" %}
 {% endblock %}

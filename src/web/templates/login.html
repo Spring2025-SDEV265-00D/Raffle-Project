@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% set card_content %}
+    <form method="POST" action="/login" class="space-y-4">
+      <div>
+        {% set for = "username" %}
+        {% set text = "Username" %}
+        {% include "components/label.html" %}
+
+        {% set id = "username" %}
+        {% set placeholder = "Username" %}
+        {% set required = true %}
+        {% include "components/input.html" %}
+      </div>
+      <div>
+        {% set for = "password" %}
+        {% set text = "Password" %}
+        {% include "components/label.html" %}
+
+        {% set id = "password" %}
+        {% set placeholder = "Password" %}
+        {% set required = true %}
+        {% include "components/input.html" %}
+      </div>
+      {% set type = "submit" %}
+      {% set text = "Login" %}
+      {% include "components/button.html" %}
+    </form>
+  {% endset %}
+  {% set title = "Login" %}
+  {% set content = card_content %}
+  {% include "components/card.html" %}
+{% endblock %}

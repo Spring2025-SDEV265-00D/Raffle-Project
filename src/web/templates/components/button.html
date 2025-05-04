@@ -1,0 +1,16 @@
+{% if href %}
+<a
+  href="{{ href }}"
+  class="w-full py-2 px-4 bg-primary hover:bg-primary-focus text-text-onBackground font-semibold text-center rounded transition-colors duration-150 {{ extra_classes | default('') }}"
+>
+  {{ text }}
+</a>
+{% else %}
+<button
+  id="{{ id | default('') }}"
+  type="{{ type | default('button') }}"
+  class="w-full py-2 px-4 bg-primary hover:bg-primary-focus text-text-onBackground font-semibold text-center rounded transition-colors duration-150 {{ extra_classes | default('') }}"
+>
+  {{ text }}
+</button>
+{% endif %}

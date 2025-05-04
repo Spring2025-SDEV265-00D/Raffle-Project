@@ -1,51 +1,30 @@
 {% extends "base.html" %} {% block head %}
 <title>Ticket Redemption</title>
-<script type="module" src="/static/js/cashier.js" defer></script>
+<script type="module" src="/static/js/cashier.js"></script>
 {% endblock %} {% block content %}
-<section id="header">
-  <div class="container-lg">
-    <div class="row justify-content-center align-items-center">
-      <div class="col-md-3 text-center text-md-start">
-        <h1>
-          <div class="display-3">Ticket Redemption</div>
-        </h1>
+    {% set card_content %}
+    <form class="flex flex-col sm:flex-row items-end gap-4 mb-4">
+      <div>
+      <label for="referenceNum" class="text-gray-700 font-semibold"
+        >Reference Number:</label
+      >
+      {% set id = "referenceNum" %}
+      {% set placeholder = "Reference Number" %}
+      {% include "components/input.html" %}
       </div>
-    </div>
-  </div>
-</section>
-
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-auto">
-      <form class="row g-2 align-items-center">
-        <div class="col-auto">
-          <label for="referenceNum" class="col-form-label"
-            >Reference Number:</label
-          >
-        </div>
-        <div class="col-auto">
-          <input
-            type="text"
-            id="referenceNum"
-            class="form-control"
-            placeholder="Enter Reference Number"
-          />
-        </div>
-        <div class="col-auto">
-          <button type="button" id="redeemBtn" class="btn btn-secondary">
-            Redeem
-          </button>
-        </div>
-        <div class="col-auto">
-          <button type="button" id="refundBtn" class="btn btn-secondary">
-            Refund
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<div id="errorMessage" style="color: red; margin-top: 10px"></div>
-<div id="result"></div>
+      <div class="flex gap-2">
+        {% set id = "redeemBtn" %}
+        {% set text = "Redeem" %}
+        {% include "components/button.html" %}
+        {% set id = "refundBtn" %}
+        {% set text = "Refund" %}
+        {% include "components/button.html" %}
+      </div>
+    </form>
+    <div id="errorMessage" class="text-red-600 mb-2"></div>
+    <div id="result"></div>
+  {% endset %}
+  {% set title = "Ticket Redemption" %}
+  {% set content = card_content %}
+  {% include "components/card.html" %}
 {% endblock %}

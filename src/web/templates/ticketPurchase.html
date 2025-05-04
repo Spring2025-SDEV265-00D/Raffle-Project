@@ -1,29 +1,32 @@
 {% extends "base.html" %} {% block head %}
 <title>Ticket Purchase</title>
-<script type="module" src="/static/js/raceSelection.js" defer></script>
+<script type="module" src="/static/js/ticketPurchase.js"></script>
 {% endblock %} {% block content %}
-<section id="header">
-  <div class="container-lg">
-    <div class="row justify-content-center align-items-center">
-      <div class="col-md-3 text-center text-md-start">
-        <h1>
-          <div class="display-3">Ticket Purchase</div>
-        </h1>
+<div class="flex flex-col items-center justify-center min-h-screen w-full">
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-2xl">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">
+      Ticket Purchase
+    </h1>
+    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+      <div class="flex-1">
+        <label for="raceDropDown" class="block text-gray-700 font-semibold mb-1"
+          >Race:</label
+        >
+        <select
+          class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
+          id="raceDropDown"
+        ></select>
       </div>
-    </div>
-  </div>
-</section>
-
-<div class="p-5 fillPage">
-  <div class="container-lg">
-    <div class="row justify-content-center align-items-center">
-      <div class="bg-white p-4 secondPage col-auto form-group">
-        <label for="raceDropDown" class="col-form-label">Race:</label>
-        <select class="form-control" id="raceDropDown"></select>
-      </div>
-      <div class="bg-white p-4 secondPage col-auto form-group">
-        <label for="quantityDropDown" class="col-form-label">Quantity:</label>
-        <select class="form-control" id="quantityDropDown">
+      <div class="flex-1">
+        <label
+          for="quantityDropDown"
+          class="block text-gray-700 font-semibold mb-1"
+          >Quantity:</label
+        >
+        <select
+          class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
+          id="quantityDropDown"
+        >
           <option value="0">0</option>
           <option value="1">1</option>
           <option value="2">2</option>
@@ -37,49 +40,59 @@
           <option value="10">10</option>
         </select>
       </div>
-      <div id="raceAdd" class="col-auto"></div>
+      <div id="raceAdd" class="flex-1"></div>
     </div>
-  </div>
-</div>
-
-<section>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">Race</th>
-        <th scope="col">Quantity</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</section>
-
-<div class="d-flex justify-content-center align-items-center">
-  <input
-    type="button"
-    class="btn btn-secondary mx-2"
-    value="Confirm"
-    id="confirmBtn"
-  />
-  <input
-    type="button"
-    class="btn btn-secondary mx-2"
-    value="Reset"
-    id="resetBtn"
-  />
-</div>
-
-<div class="d-flex justify-content-center align-items-center">
-  <div id="errorMessage" style="color: red; margin-top: 10px"></div>
-  <div id="result"></div>
-</div>
-
-<div id="ticketModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <div id="ticketContainer"></div>
-    <div class="modal-buttons">
-      <button id="printBtn">Print Ticket</button>
+    <div class="overflow-x-auto mb-6">
+      <table class="min-w-full bg-white border border-gray-200 rounded">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="py-2 px-4 border-b">Race</th>
+            <th class="py-2 px-4 border-b">Quantity</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="flex justify-center gap-4 mb-4">
+      <button
+        class="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors duration-150"
+        id="confirmBtn"
+      >
+        Confirm
+      </button>
+      <button
+        class="py-2 px-4 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded transition-colors duration-150"
+        id="resetBtn"
+      >
+        Reset
+      </button>
+    </div>
+    <div class="flex justify-center gap-4">
+      <div id="errorMessage" class="text-red-600"></div>
+      <div id="result"></div>
+    </div>
+    <!-- Modal -->
+    <div
+      id="ticketModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+        <button
+          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+          id="closeModal"
+        >
+          &times;
+        </button>
+        <div id="ticketContainer"></div>
+        <div class="flex justify-end mt-4">
+          <button
+            id="printBtn"
+            class="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors duration-150"
+          >
+            Print Ticket
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -6,3 +6,5 @@ data/
 .venv/
 .DS_Store
 **/.env
+node_modules/
+# output.css # TODO: Normally this should be ignored, but my team does not have node installed

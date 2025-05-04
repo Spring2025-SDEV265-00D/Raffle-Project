@@ -15,7 +15,7 @@ def validate_payload_structure(expected_fields=None,
         @wraps(func)
         def wrapper(*args, **kwargs):
 
-            # *Insufficient arguments  fallback
+            # *Insufficient arguments fallback
             if not expected_headers and not expected_fields and expecting_payload:
                 raise PayloadError(
                     "No expected incoming data structure provided: either `expected_fields` or `expected_headers` are required."
