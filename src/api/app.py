@@ -43,7 +43,6 @@ login_manager.init_app(app)
 
 @login_manager.unauthorized_handler
 def unauthorized():
-    # response.headers["Access-Control-Allow-Credentials"] = "true"
     return jsonify({"error": "Authentication required"}), 401
 
 
@@ -56,10 +55,10 @@ def load_user(user_id):
 @app.teardown_appcontext
 def close_db(e=None):
     from utils import db
-
     db.close_conn(e)
 
-    # *====================GLOBAL CONTEXT ERROR HANDLER====================*
+
+# *====================GLOBAL CONTEXT ERROR HANDLER====================*
 
 
 @app.errorhandler(AppError)
@@ -70,12 +69,6 @@ def handle_app_error(e):
 
     Util.pretty_print(response)
     return jsonify(response['error']), status
-    """ #!let it crash for now so we can see whats going on
-# for unexpected errors?
-@app.errorhandler(Exception)
-def handle_unexpected_error(e):
-    return jsonify({"error": "Something UNEXPECTED went wrong"}), 500
- """
 
 
 if __name__ == "__main__":

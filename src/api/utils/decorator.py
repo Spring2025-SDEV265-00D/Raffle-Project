@@ -74,73 +74,70 @@ def validate_payload_structure(expected_fields=None,
 # used in blueprint setup
 # triggered by before_request
 
+# def restrict_by_role(allowed_roles: list[str] | str):
+#     ## -------------------------------------------------------------
+#     ## COMMENTED OUT UNTIL LOGIN IS IMPLEMENTED
+#     ## -------------------------------------------------------------
 
-def restrict_by_role(allowed_roles: list[str] | str):
-    ## -------------------------------------------------------------
-    ## COMMENTED OUT UNTIL LOGIN IS IMPLEMENTED
-    ## -------------------------------------------------------------
+#     # from flask_login import current_user
 
-    # from flask_login import current_user
+#     # if isinstance(allowed_roles, str):
+#     #     allowed_roles = [allowed_roles]
 
-    # if isinstance(allowed_roles, str):
-    #     allowed_roles = [allowed_roles]
+#     def decorator(func):
 
-    def decorator(func):
+#         @wraps(func)
+#         def wrapper(*args, **kwargs):
+#             # response = None
 
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            # response = None
+#             # # check if session has a logged user
+#             # if current_user.is_anonymous:
+#             #     response = {'error': "Unauthorized. Please log in"}, 401
 
-            # # check if session has a logged user
-            # if current_user.is_anonymous:
-            #     response = {'error': "Unauthorized. Please log in"}, 401
+#             # current_role = current_user.get_role().get('role')
 
-            # current_role = current_user.get_role().get('role')
+#             # has_clearance = current_role == "Admin" or current_role in allowed_roles
+#             # if not has_clearance:
+#             #     response = {'error': f"Access forbidden: Insufficient role."}, 403
 
-            # has_clearance = current_role == "Admin" or current_role in allowed_roles
-            # if not has_clearance:
-            #     response = {'error': f"Access forbidden: Insufficient role."}, 403
+#             # return response
+#             return func(*args, **kwargs)
 
-            # return response
-            return func(*args, **kwargs)
+#         return wrapper
 
-        return wrapper
+#     return decorator
 
-    return decorator
+# # restricts access per route decorator
 
+# def require_role(allowed_roles: str | list[str]):
+#     ## -------------------------------------------------------------
+#     ## COMMENTED OUT UNTIL LOGIN IS IMPLEMENTED
+#     ## -------------------------------------------------------------
+#     # from flask_login import current_user
 
-# restricts access per route decorator
+#     # if isinstance(allowed_roles, str):
+#     #     allowed_roles = [allowed_roles]
 
+#     def decorator(func):
 
-def require_role(allowed_roles: str | list[str]):
-    ## -------------------------------------------------------------
-    ## COMMENTED OUT UNTIL LOGIN IS IMPLEMENTED
-    ## -------------------------------------------------------------
-    # from flask_login import current_user
+#         @wraps(func)
+#         def wrapper(*args, **kwargs):
+#             # response = None
 
-    # if isinstance(allowed_roles, str):
-    #     allowed_roles = [allowed_roles]
+#             # # check if session has a logged user
+#             # if current_user.is_anonymous:
+#             #     response = {'error': "Unauthorized. Please log in"}, 401
 
-    def decorator(func):
+#             # # if so check their clearance
+#             # current_role = current_user.get_role().get('role')
+#             # has_clearance = current_role == "Admin" or current_role in allowed_roles
+#             # if not has_clearance:
+#             #     response = {
+#             #         'error': f"Access forbidden: Insufficient role."}, 403
 
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            # response = None
+#             # return response if response else func(*args, **kwargs)
+#             return func(*args, **kwargs)
 
-            # # check if session has a logged user
-            # if current_user.is_anonymous:
-            #     response = {'error': "Unauthorized. Please log in"}, 401
+#         return wrapper
 
-            # # if so check their clearance
-            # current_role = current_user.get_role().get('role')
-            # has_clearance = current_role == "Admin" or current_role in allowed_roles
-            # if not has_clearance:
-            #     response = {
-            #         'error': f"Access forbidden: Insufficient role."}, 403
-
-            # return response if response else func(*args, **kwargs)
-            return func(*args, **kwargs)
-
-        return wrapper
-
-    return decorator
+#     return decorator

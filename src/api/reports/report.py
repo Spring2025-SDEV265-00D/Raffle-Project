@@ -1,7 +1,9 @@
-from .db_instance import db
-from .util import Util
+from utils import db, Util
 
 
+## MJ: This needs a more descriptive class name.
+## Consider that we will eventually have several report types, each with their own
+## report class. A good name for the public method might be `generate()`
 class Report():
 
     @staticmethod
@@ -20,7 +22,6 @@ class Report():
             horse.pop('horse_id', None)
             horse.pop('race_id', None)
             horse['tickets_sold'] = ticket_count
-           # print(horse)
             report.append(horse)
 
         return report

@@ -1,14 +1,7 @@
-from flask_login import UserMixin
-from werkzeug.security import check_password_hash
-from utils import Util
-from utils import AuthenticationError
-from .base_model import BaseModel
-
-# from utils import Util
-# from utils import NotFoundError, ModelStateError
-from utils import db
-
 from enum import Enum
+from flask_login import UserMixin
+from utils import AuthenticationError, Util, db
+from .base_model import BaseModel
 
 
 class Role(BaseModel):
@@ -28,12 +21,6 @@ class Role(BaseModel):
 
 class User(UserMixin, BaseModel):
 
-    #    def __init__(self, id, username, password, role):
-    #        self.id = id
-    #        self.username = username
-    #        self.password = password
-    #        self.role = role
-
     def __init__(self, data: dict):
         self.id = data['user_id']
         self.username = data['username']
@@ -47,10 +34,7 @@ class User(UserMixin, BaseModel):
 
     def __repr__(self):
 
-        return {'id': self.id,
-                'username': self.username,
-                'role_id': self.role
-                }
+        return {'id': self.id, 'username': self.username, 'role_id': self.role}
 
     def get_id(self):
         return str(self.id)
@@ -68,12 +52,12 @@ class User(UserMixin, BaseModel):
         if user_row:
             user_row = Util.handle_row_data(user_row, User)[0]
 
-       # Util.p("in login user", user_row=user_row)
-
-        if not user_row or not check_password_hash(user_row['password'], password['password']):
-            raise AuthenticationError("Invalid username or password.",
-                                      context=AuthenticationError.get_error_context(user_row=user_row,
-                                                                                    data=data))
+        if not user_row or not check_password_hash(user_row['password'],
+                                                   password['password']):
+            raise AuthenticationError(
+                "Invalid username or password.",
+                context=AuthenticationError.get_error_context(
+                    user_row=user_row, data=data))
 
         else:
             return User(user_row)

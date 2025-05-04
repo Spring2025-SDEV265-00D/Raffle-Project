@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app, flash, redirect, url_for
+from flask import Blueprint, request, jsonify, flash, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import timedelta
 

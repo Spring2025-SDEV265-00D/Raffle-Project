@@ -1,21 +1,17 @@
 from models import Ticket
-from flask import Blueprint, request, jsonify
-from flask_cors import CORS, cross_origin
-from flask_login import login_required
+from flask import Blueprint, jsonify
+from flask_cors import cross_origin
 
 from models import Event
 from models import Race
-from utils import validate_payload_structure, require_role
+from utils import validate_payload_structure  #, require_role
 
 fetcher_bp = Blueprint("fetcher", __name__, url_prefix="/fetch")
-
-# need to replace @login_required with @require_role decorator where needed
-# *EVENTS
 
 
 @fetcher_bp.route("/event/info", methods=["GET"])
 @validate_payload_structure(expected_fields='event_id')
-@require_role('Seller')
+# @require_role('Seller')
 @cross_origin()
 def fetch_event(validated_payload):
 
@@ -25,12 +21,9 @@ def fetch_event(validated_payload):
 
 @fetcher_bp.route("/events", methods=["GET"])
 @validate_payload_structure(expecting_payload=False)
-@require_role('Seller')
+# @require_role('Seller')
 @cross_origin()
 def fetch_all_events(validated_payload=None):
-
-    # Util.p("in routes", validated_payload=validated_payload)  # debug
-
     filter = None  # set filter with expected attributes
     return jsonify(Event.get_all(filter))
 
@@ -40,7 +33,7 @@ def fetch_all_events(validated_payload=None):
 
 @fetcher_bp.route("/events/races", methods=["GET"])
 @validate_payload_structure(expected_fields='event_id')
-@require_role('Seller')
+# @require_role('Seller')
 @cross_origin()
 def fetch_races_for_event(validated_payload):
 
@@ -65,11 +58,8 @@ def fetch_races_for_event(validated_payload):
 # !this is admin functionality
 @fetcher_bp.route("/events/races/horses", methods=["GET"])
 @validate_payload_structure(expected_fields='race_id')
-@require_role('Admin')
+# @require_role('Admin')
 def fetch_horses_for_race(validated_payload):
-
-    # validated_payload = {'race_id': 1}
-    # can take a filter to fetch only specific data
     filter = None
     return jsonify(Race.get_horses(validated_payload, filter))
 
@@ -79,7 +69,7 @@ def fetch_horses_for_race(validated_payload):
 
 @fetcher_bp.route("/ticket/info", methods=["GET"])
 @validate_payload_structure(expected_fields='ticket_id')
-@require_role('Seller')
+# @require_role('Seller')
 @cross_origin()
 def fetch_ticket(validated_payload):
 

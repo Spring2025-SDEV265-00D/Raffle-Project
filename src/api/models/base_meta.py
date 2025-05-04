@@ -1,27 +1,22 @@
 import sqlite3
 from enum import Enum
-
-from utils import Util
 from utils import DATABASE_PATH
-from utils import db
 
 
 class FieldEnumMeta(Enum):
+
     def __init__(self, label):
         self.label = label
 
-    #!used this to grab the db attributes dynamically but it is not very intuitive and hidden
-    #!it is better to use the class attributes directly or a constants.py
-
-    #!has no influence on the code, keeping to see if theres a use for it
-
 
 class BaseMeta(type):
+
     def __new__(mcls, child_class_name, parent_classes, class_dict):
 
         # check if its BaseModel class,
         if class_dict.get("_is_abstract"):
-            return super().__new__(mcls, child_class_name, parent_classes, class_dict)
+            return super().__new__(mcls, child_class_name, parent_classes,
+                                   class_dict)
 
         # if its one of our final models, define behavior
         # first get conn manually, to avoid using app_context from flask
@@ -42,61 +37,15 @@ class BaseMeta(type):
         enum_fields = {}
         for col_data in table_column_data:
             is_pk = col_data[5] == 1
-            col_name = f"{table_name.lower()}_{col_data[1]}" if is_pk else col_data[1]
-            col_type = col_data[2]  # not using
-
+            col_name = f"{table_name.lower()}_{col_data[1]}" if is_pk else col_data[
+                1]
+            # col_type = col_data[2]  # not using
             enum_var_name = "ID" if is_pk else col_name.upper()
-            # full_name = f"{table_name}_{col_name}" if is_pk else f"{table_name}.{col_name}"
-
-            # Util.p(col_name)
-
             enum_fields[enum_var_name] = (col_name)
 
         built_enum = FieldEnumMeta(f"{table_name}FieldEnum", enum_fields)
 
         class_dict["Fields"] = built_enum
 
-        #        t = class_dict["Fields"]
-        #        if table_name == "Event":
-        #            for name, fullName in t.__members__.items():
-        #                Util.p("class dict", name=name, data=fullName)
-        # if child_class_name == "Event":
-
-        return super().__new__(mcls, child_class_name, parent_classes, class_dict)
-
-
-# puts all db atts in a dictionary, not super useful
-""" 
-    def __new__(mcls, child_class_name, parent_classes, class_dict):
-
-        # check if its BaseModel class,
-        if class_dict.get("_is_abstract"):
-            return super().__new__(mcls, child_class_name, parent_classes, class_dict)
-
-        # if its one of our final models, define behavior
-        # first get conn manually, to avoid using app_context from flask
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
-
-        query = f"PRAGMA table_info({child_class_name});"
-        table_column_data = cursor.execute(query).fetchall()
-
-        # now populate class dictionary with desired variables
-        # all column names from db are stored in a dictionary called _FIELDS in the format:{TABLE.COLUMN : column} 'RACE.EVENT_ID': 'event_id'
-
-        class_dict["_TABLE"] = child_class_name
-        class_dict["_FIELDS"] = {}
-
-        for col_data in table_column_data:
-            col_name = col_data[1]
-            col_type = col_data[2]  # not using this right now...
-
-            key = f"{child_class_name}.{col_name}".upper()
-
-            class_dict["_FIELDS"][key] = col_name
-
-        if child_class_name == "Event":
-            Util.p("class dict", dic=class_dict["_FIELDS"])
-
-        return super().__new__(mcls, child_class_name, parent_classes, class_dict)
- """
+        return super().__new__(mcls, child_class_name, parent_classes,
+                               class_dict)
