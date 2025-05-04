@@ -98,7 +98,7 @@ async function loadRaces() {
         <td>${race.race_id}</td>
         <td>${race.race_number}</td>
         <td>
-          <span class="badge badge-${isClosed ? "danger" : "success"}">
+          <span class="badge ${isClosed ? "bg-danger" : "bg-success"}">
             ${isClosed ? "Closed" : "Open"}
           </span>
         </td>
@@ -110,9 +110,14 @@ async function loadRaces() {
           </button>
           ${
             !isClosed
-              ? `<button class="btn btn-sm btn-warning btn-close-race" data-race-id="${race.race_id}">Close Betting</button>`
+              ? `<button class="btn btn-sm btn-warning btn-close-race" data-race-id="${race.race_id}">Close Race</button>`
               : ""
           }
+          <button class="btn btn-sm btn-danger btn-delete-race" data-race-id="${
+            race.race_id
+          }">
+            Delete Race
+          </button>
         </td>
       `;
       racesTableBody.appendChild(row);
@@ -121,7 +126,7 @@ async function loadRaces() {
     document.querySelectorAll(".btn-manage-horses").forEach((btn) => {
       btn.addEventListener("click", function () {
         const raceId = this.getAttribute("data-race-id");
-        window.location.href = `manage-horses.html?raceId=${raceId}`; //!! missing?
+        window.location.href = `manage-horses.html?raceId=${raceId}`;
       });
     });
 
@@ -148,6 +153,34 @@ async function loadRaces() {
             console.error("Error closing race:", error);
             document.getElementById("errorMessage").textContent =
               "Failed to close race. Please try again later.";
+          }
+        }
+      });
+    });
+
+    document.querySelectorAll(".btn-delete-race").forEach((btn) => {
+      btn.addEventListener("click", async function () {
+        const raceId = this.getAttribute("data-race-id");
+        if (
+          confirm(
+            "Are you sure you want to delete this race? This action cannot be undone."
+          )
+        ) {
+          try {
+            const response = await fetch(`${API_BASE_URL}/admin/races/delete`, {
+              method: "DELETE",
+              credentials: "include",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ race_id: raceId }),
+            });
+            if (!response.ok) {
+              throw new Error("Failed to delete race");
+            }
+            loadRaces();
+          } catch (error) {
+            console.error("Error deleting race:", error);
+            document.getElementById("errorMessage").textContent =
+              "Failed to delete race. Please try again later.";
           }
         }
       });

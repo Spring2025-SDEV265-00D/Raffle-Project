@@ -96,3 +96,23 @@ class BaseModel(metaclass=BaseMeta):
                     cls=cls,
                     set_clause_data=set_clause_data,
                     where_clause_data=where_clause_data))
+
+    @classmethod
+    def delete_by_id(cls, id_data: dict) -> None:
+        """Delete a record by its ID."""
+        if not cls.id_exists_in_db(id_data):
+            raise NotFoundError(
+                f"No record found for {cls.__name__} -> {id_data}",
+                context=NotFoundError.get_error_context(data=id_data))
+
+        try:
+            if not db.query.delete_row_by_id(cls, id_data):
+                raise DatabaseError(
+                    f"Failed to delete {cls.__name__} -> {id_data}",
+                    context=DatabaseError.get_error_context(data=id_data))
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise DatabaseError(
+                f"Failed to delete {cls.__name__}: {str(e)}",
+                context=DatabaseError.get_error_context(data=id_data))

@@ -112,6 +112,31 @@ def manage_race():
     return render_template("raceManage.html")
 
 
+@app.route("/admin/users/register", methods=['GET', 'POST'])
+@check_auth
+@check_role('Admin')
+def register_user_page():
+    if request.method == 'POST':
+        try:
+            # Forward the request to the API
+            response = requests.post(
+                f"{API_BASE_URL}/auth/register",
+                data=request.form,
+                headers={'Cookie': f'session={session.get("session")}'}
+            )
+            
+            if response.status_code == 201:
+                flash('User registered successfully!', 'success')
+                return redirect(url_for('admin_dashboard'))
+            else:
+                flash(response.json().get('message', 'Error registering user'), 'error')
+        except Exception as e:
+            flash('An error occurred during registration', 'error')
+            print(f"Registration error: {str(e)}")
+    
+    return render_template("userRegistration.html")
+
+
 # *-----------------SELLERS-----------------*
 
 

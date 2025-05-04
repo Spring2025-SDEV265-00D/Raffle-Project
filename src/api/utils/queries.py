@@ -244,3 +244,14 @@ class QueryHelper:
 
         self.cursor.execute(query, args)
         return self.cursor.lastrowid
+
+    def delete_row_by_id(self, model_class, id_data: dict) -> bool:
+        """Delete a record by its ID."""
+        table_name = model_class.get_table_name()
+        id_data =Util.normalize_id(id_data, model_class, "strip")
+        id_field ='id'
+        
+        query = f"DELETE FROM {table_name} WHERE {id_field} = ?"
+        self.cursor.execute(query, (id_data[id_field],))
+        
+        return self.cursor.rowcount > 0

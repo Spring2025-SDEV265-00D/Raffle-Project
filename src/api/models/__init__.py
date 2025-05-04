@@ -4,12 +4,14 @@ from .event import Event
 from .horse import Horse
 from .race import Race
 from .ticket import Ticket
-from .user import User
+from .user import User, Role
 
 # used to check if a parent exists before adding a child (ensuring you can't add a race to an invalid event_id)
 MODEL_REGISTRY = {
     'event_id': Event,
     'race_id': Race,
     'horse_id': Horse,
-    'ticket_id': Ticket
+    'ticket_id': Ticket,
+    'role_id': Role,
+    'user_id': User
 }

@@ -5,6 +5,7 @@ from utils import validate_payload_structure  #, require_role, restrict_by_role
 from models import Event
 from models import Race
 from models import Horse
+from utils import db
 
 # set blueprint
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -32,6 +33,23 @@ def create_race(validated_payload):
 @cross_origin()
 def close_race(validated_payload):
     return jsonify(Race.close(validated_payload)), 200
+
+
+@admin_bp.route("/races/delete", methods=["DELETE"])
+@validate_payload_structure(expected_fields='race_id')
+@cross_origin()
+def delete_race(validated_payload):
+    try:
+        Race.delete_by_id(validated_payload)
+        return jsonify({
+            "status": "success",
+            "message": f"Race {validated_payload['race_id']} has been deleted successfully"
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "error",
+            "message": f"Failed to delete race: {str(e)}"
+        }), 500
 
 
 @admin_bp.route("/race/update", methods=["POST", "GET"])
