@@ -17,7 +17,7 @@ def validate_payload_structure(expected_fields=None,
 
             # *Insufficient arguments  fallback
             if not expected_headers and not expected_fields and expecting_payload:
-                raise PayloadError(  # need context?
+                raise PayloadError(
                     "No expected incoming data structure provided: either `expected_fields` or `expected_headers` are required."
                 )
 
@@ -32,10 +32,6 @@ def validate_payload_structure(expected_fields=None,
 
             payload = request.args.to_dict(
             ) if request.method == "GET" else request.get_json()
-            # payload = request.get_json() if request.method in (
-            #     "POST", "PATCH") else request.args.to_dict()
-
-            # Util.p("in decorator payload", payload=payload)
 
             # *Support for no-payload routes, ensures nothing incoming
             if not expecting_payload:
@@ -58,8 +54,6 @@ def validate_payload_structure(expected_fields=None,
 
                 validated = Util.valid_payload(payload=payload,
                                                expected=expected_fields)
-
-            # Util.p("in decorator", validated=validated)
 
             # *what is actually being passed on to the route
             kwargs["validated_payload"] = validated
