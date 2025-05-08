@@ -16,19 +16,28 @@ def login():
 
         # Attempt to authenticate the user
         user = User.login({'username': username, 'password': password})
+
         if not user:
-            # We can use the "flashed message" in the front end via Jinja templating
-            flash("Invalid credentials")
-            return redirect(url_for('login'))
+            return jsonify({
+                "status": "error",
+                "message": "Invalid credentials"
+            }), 401
 
         login_user(user, duration=timedelta(minutes=30))
-        return redirect(
-            url_for('dashboard'))  # or wherever you want to go after login
-
+        
+        # Get user role
+        role = user.get_role()
+        
+        return jsonify({
+            "status": "success",
+            "message": "Login successful!",
+            "role": role
+        }), 200
     except Exception as e:
-        flash("An error occurred during login")
-        return redirect(url_for('login'))
-
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
 
 
 @auth_bp.route("/logout", methods=["POST"])

@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 
+{% block head %}
+<title>Login</title>
+<script type="module" src="/static/js/login.js"></script>
+{% endblock %}
+
 {% block content %}
   {% set card_content %}
-    <form method="POST" action="/login" class="space-y-4">
+    <form id="loginForm" method="POST" action="{{ api_base_url }}/auth/login" class="space-y-4">
+      <div id="errorMessage" class="text-red-600 mb-3"></div>
       <div>
         {% set for = "username" %}
         {% set text = "Username" %}
