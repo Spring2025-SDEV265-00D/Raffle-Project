@@ -60,6 +60,11 @@ def add_event():
 def manage_race():
     return render_template("raceManage.html")
 
+@app.route("/admin/race/horses/manage")
+# @check_auth
+# @check_role('Admin')
+def manage_horses():
+    return render_template("manageHorses.html")
 
 # *-----------------SELLERS-----------------*
 
