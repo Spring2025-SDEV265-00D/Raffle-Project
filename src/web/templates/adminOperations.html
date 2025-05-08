@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block head %}
 <title>Select Event</title>
+<script type="module" src="/static/js/adminOperations.js"></script>
 {% endblock %}
 {% block content %}
 
@@ -53,10 +54,11 @@
   </div>
   <div id="errorMessage" class="text-red-600 mb-3"></div>
   <div class="flex justify-center">
-  {% set type = "button" %}
-  {% set text = "Add Event" %}
-  {% set extra_classes = "mb-4 w-60" %}
-  {% include "components/button.html" %}
+    {% set type = "button" %}
+    {% set text = "Add Event" %}
+    {% set id = "addEventBtn" %}
+    {% set extra_classes = "mb-4 w-60" %}
+    {% include "components/button.html" %}
   </div>
 
 {% endset %}

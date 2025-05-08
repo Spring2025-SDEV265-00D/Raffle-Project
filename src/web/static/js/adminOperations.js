@@ -1,4 +1,4 @@
-// const { API_BASE_URL } = window.ENV;
+const { API_BASE_URL } = window.ENV;
 
 // document.addEventListener("DOMContentLoaded", () => {
 //   loadEvents();
@@ -76,3 +76,15 @@
 //     errorMessage.textContent = "Failed to load events. Please try again later.";
 //   }
 // }
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Get the Add Event button by ID
+  const addEventBtn = document.getElementById('addEventBtn');
+  
+  if (addEventBtn) {
+    addEventBtn.addEventListener('click', function() {
+      // Redirect to the event creation page
+      window.location.href = '/admin/events/create';
+    });
+  }
+});
