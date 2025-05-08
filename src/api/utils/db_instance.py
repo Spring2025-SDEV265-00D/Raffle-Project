@@ -172,7 +172,7 @@ def create_tables():
                   event_id INTEGER NOT NULL,
                   race_number INTEGER NOT NULL CHECK (race_number > 0),
                   closed INTEGER DEFAULT 0 CHECK (closed IN (0, 1)), --Sqlite does not support boolean, we simulate it using int with a constraint
-
+                  UNIQUE(event_id, race_number),
                   FOREIGN KEY (event_id) REFERENCES event(id)
               );
               """,
