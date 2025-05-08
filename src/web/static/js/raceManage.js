@@ -2,6 +2,7 @@ const { API_BASE_URL } = window.ENV;
 
 let currentEventId = null;
 let eventDetails = {};
+let existingRaces = []; // Store existing races for validation
 
 function getEventIdFromUrl() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -48,7 +49,6 @@ async function loadEventDetails() {
       event = data.event_id == eventId ? data : null;
     }
 
-    //const event = data.find(ev => String(ev.event_id) === String(eventId));
     if (!event) {
       throw new Error("Event not found");
     }
@@ -83,6 +83,7 @@ async function loadRaces() {
       throw new Error("Failed to fetch races");
     }
     const races = await response.json();
+    existingRaces = races; // Store races for validation
 
     racesTableBody.innerHTML = "";
 
@@ -121,7 +122,7 @@ async function loadRaces() {
     document.querySelectorAll(".btn-manage-horses").forEach((btn) => {
       btn.addEventListener("click", function () {
         const raceId = this.getAttribute("data-race-id");
-        window.location.href = `manage-horses.html?raceId=${raceId}`; //!! missing?
+        window.location.href = `manage-horses.html?raceId=${raceId}`;
       });
     });
 
@@ -161,34 +162,46 @@ async function loadRaces() {
 
 async function addRace(e) {
   e.preventDefault();
+  const errorMessage = document.getElementById("errorMessage");
+  const successMessage = document.getElementById("successMessage");
+  errorMessage.textContent = "";
+  successMessage.textContent = "";
 
   const raceNumber = document.getElementById("raceNumber").value;
 
+  // Validate race number
+  if (!raceNumber) {
+    errorMessage.textContent = "Race number is required";
+    return;
+  }
+
+  // Check for duplicate race number
+  if (existingRaces.some(race => race.race_number === parseInt(raceNumber))) {
+    errorMessage.textContent = "This race number already exists for this event";
+    return;
+  }
+
   try {
     const response = await fetch(`${API_BASE_URL}/admin/races/create`, {
-      //needs backend
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         event_id: currentEventId,
-        race_number: raceNumber,
-        //closed: 0
+        race_number: parseInt(raceNumber),
       }),
     });
     if (!response.ok) {
       throw new Error("Failed to add race");
     }
     document.getElementById("addRaceForm").reset();
-    document.getElementById("successMessage").textContent =
-      "Race added successfully!";
+    successMessage.textContent = "Race added successfully!";
     setTimeout(() => {
-      document.getElementById("successMessage").textContent = "";
+      successMessage.textContent = "";
     }, 3000);
     loadRaces();
   } catch (error) {
     console.error("Error adding race:", error);
-    document.getElementById("errorMessage").textContent =
-      "Failed to add race. Please try again later.";
+    errorMessage.textContent = "Failed to add race. Please try again later.";
   }
 }
