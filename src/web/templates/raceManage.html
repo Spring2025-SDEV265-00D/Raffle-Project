@@ -1,6 +1,7 @@
 {% extends "base.html" %} {% block head %}
 <title>Manage Races</title>
 <script type="module" src="/static/js/raceManage.js"></script>
+<script type="module" src="/static/js/report.js" defer></script>
 {% endblock %} {% block content %}
 <div class="flex flex-col items-center justify-center min-h-screen w-full">
   <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-3xl">
@@ -43,6 +44,29 @@
         </button>
       </form>
     </div>
+    <div class="bg-background-cardBackground rounded p-4 mb-4">
+      <h3 class="font-semibold mb-2">Get Race Report</h3>
+      <form id="getReportForm" class="flex gap-4 items-end">
+        <div>
+          <label for="raceID" class="block text-gray-700 font-semibold mb-1"
+            >Race ID:</label
+          >
+          <input
+            type="number"
+            id="raceID"
+            min="1"
+            required
+            class="px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
+          />
+        </div>
+        <button
+          type="submit"
+          class="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors duration-150"
+        >
+          Get Report
+        </button>
+      </form>
+    </div>
     <h3 class="text-lg font-semibold mb-2">Races</h3>
     <div class="overflow-x-auto">
       <table class="min-w-full bg-white border border-gray-200 rounded">
@@ -65,4 +89,30 @@
     </button>
   </div>
 </div>
+
+<div
+  id="reportModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden"
+>
+  <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md relative">
+    <button
+      class="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+      id="closeModal"
+    >
+      &times;
+    </button>
+    
+    <div id="reportContainer"></div>
+    
+    <div class="flex justify-end mt-4">
+      <button
+        id="printBtn"
+        class="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition-colors duration-150"
+      >
+        Print Report
+      </button>
+    </div> 
+  </div> 
+</div> 
+
 {% endblock %}
