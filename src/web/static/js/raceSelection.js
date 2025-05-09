@@ -237,55 +237,89 @@ document.addEventListener("DOMContentLoaded", async function loadRaces() {
 });
 
 // This function generates the ticket for displaying/printing, and can deal with up to 10 total
-//* The design of this ticket is outdated, it will be updated later
+// Here is a link to the html in the planning repo if it is needed: https://github.com/Spring2025-SDEV265-00D/raffle-planning/tree/c69c6daf65feb04f3706a78d14e0d4576963ffeb/planning/final%20ticket%20html
+//! The only things that need to be done are to get the variable names. I haven't tested how it looks, but the prev ver is commented out bellow if it doesn't work
 async function generateTicket(data) {
   let html = '<div class="ticket">';
-  html +=
-    '<h2 align="center" id="ticketTitle">' +
-    `${data.order[0].event_name}` +
-    "</h2>";
-  html +=
-    '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_final.png" alt=":(">'; // alt isnt descriptive because it would
-  html +=
-    '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_final.png" alt="):">'; // mess up the format of everything
-  html += "<div>";
-  html +=
-    "<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>";
-  html += '<div class="line">';
-
-  // add all tickets into it
+  html += '<h2 align="center" id="ticketTitle">${data.order[0].event_name}</h2>';
+  html += '<p id="dateTop">12/12/2025 - 12/12/2025</p>'; //!------ this is the date of the event, it needs to be taken from the data
+  html += '<img align="left" class="ticketImg" id="img1" src="images/horse_scroll_final.png" alt=":(">'
+  html += '<img align="right" class="ticketImg" id="img2" src="images/horse_scroll_final.png" alt="):">';
+  html += '<div>' + '<div class="grid">';
+  html += '<div>Ref. #</div><div>Race. #</div><div>Horse. #</div>';
+  // add all avalible tickets
   //* there is a limit of 10 tickets that can be displayed
   for (let i = 0; i < data.order.length && i < 10; i++) {
-    html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`;
+    html += '<div>${data.order[i].ticket_id}</div><div>${data.order[i].race_number}</div><div>${data.order[i].horse_number}</div>';
   }
+  html += '</div>';
+  html += '<div class="botGrid"><div>Order ID: 12345</div><div>Date Issued: 12/12/2025</div></div>'; //!----- needs the date issued and order ID from the data
+  html += '<div><p class="textBottom">This event is sanctioned by 2334556</p></div></div>'
 
-  html += "</div>";
-  html +=
-    '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
-  html += "</div>";
-
-  // the second ticket is always there, but can only be seen when printing
-  // the only diference is just the id in the first div
-  html += '<div class="ticket" id="ticket2">';
-  html +=
-    '<h2 align="center" id="ticketTitle">' +
-    `${data.order[0].event_name}` +
-    "</h2>";
-  html +=
-    '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_final.png" alt=":(">';
-  html +=
-    '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_final.png" alt="):">';
-  html += "<div>";
-  html +=
-    "<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>";
-  html += '<div class="line">';
+  //*---------    Second ticket    ---------*//
+  html += '<div class="ticket" id="ticket2">'; // the id hides this ticket until the print page, haven't tested if this ver messes with it
+  html += '<h2 align="center" id="ticketTitle">${data.order[0].event_name}</h2>';
+  html += '<p id="dateTop">12/12/2025 - 12/12/2025</p>'; //!------ this is the date of the event, it needs to be taken from the data
+  html += '<img align="left" class="ticketImg" id="img1" src="images/horse_scroll_final.png" alt=":(">'
+  html += '<img align="right" class="ticketImg" id="img2" src="images/horse_scroll_final.png" alt="):">';
+  html += '<div>' + '<div class="grid">';
+  html += '<div>Ref. #</div><div>Race. #</div><div>Horse. #</div>';
+  // add all avalible tickets
+  //* there is a limit of 10 tickets that can be displayed
   for (let i = 0; i < data.order.length && i < 10; i++) {
-    html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`;
+    html += '<div>${data.order[i].ticket_id}</div><div>${data.order[i].race_number}</div><div>${data.order[i].horse_number}</div>';
   }
-  html += "</div>";
-  html +=
-    '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
-  html += "</div>";
+  html += '</div>';
+  html += '<div class="botGrid"><div>Order ID: 12345</div><div>Date Issued: 12/12/2025</div></div>'; //!----- needs the date issued and order ID from the data
+  html += '<div><p class="textBottom">This event is sanctioned by 2334556</p></div></div>'
+
+
+  // html +=
+  //   '<h2 align="center" id="ticketTitle">' +
+  //   `${data.order[0].event_name}` +
+  //   "</h2>";
+  // html +=
+  //   '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_final.png" alt=":(">'; // alt isnt descriptive because it would
+  // html +=
+  //   '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_final.png" alt="):">'; // mess up the format of everything
+  // html += "<div>";
+  // html +=
+  //   "<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>";
+  // html += '<div class="line">';
+
+  // // add all tickets into it
+  // //* there is a limit of 10 tickets that can be displayed
+  // for (let i = 0; i < data.order.length && i < 10; i++) {
+  //   html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`;
+  // }
+
+  // html += "</div>";
+  // html +=
+  //   '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
+  // html += "</div>";
+
+  // // the second ticket is always there, but can only be seen when printing
+  // // the only diference is just the id in the first div
+  // html += '<div class="ticket" id="ticket2">';
+  // html +=
+  //   '<h2 align="center" id="ticketTitle">' +
+  //   `${data.order[0].event_name}` +
+  //   "</h2>";
+  // html +=
+  //   '<img align="left" class="ticketImg" id="img1" src="../static/assets/images/horse_scroll_final.png" alt=":(">';
+  // html +=
+  //   '<img align="right" class="ticketImg" id="img2" src="../static/assets/images/horse_scroll_final.png" alt="):">';
+  // html += "<div>";
+  // html +=
+  //   "<li>Event No.</li><li>Race No.</li><li>Horse No.</li><li>Ref No</li></div>";
+  // html += '<div class="line">';
+  // for (let i = 0; i < data.order.length && i < 10; i++) {
+  //   html += `<div><li>1</li><li>${data.order[i].race_number}</li><li>${data.order[i].horse_number}</li><li>${data.order[i].ticket_id}</li></div>`;
+  // }
+  // html += "</div>";
+  // html +=
+  //   '<div><p class="textBottom">This event is sanctioned by 2334556</p></div>';
+  // html += "</div>";
 
   return html;
 }
